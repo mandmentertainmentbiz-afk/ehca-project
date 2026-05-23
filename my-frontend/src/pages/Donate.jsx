@@ -54,7 +54,7 @@ export default function Donate() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/donations",
+        "https://ehca-backend-1.onrender.com/api/donations",
         {
           method: "POST",
           headers: {

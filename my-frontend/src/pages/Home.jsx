@@ -78,9 +78,9 @@ export default function Home() {
   /* ================= FETCH PROJECTS ================= */
   useEffect(() => {
     const fetchProjects = async () => {
-      try {
+      try {             
         const res = await axios.get(
-          "http://localhost:5000/api/projects"
+          "https://ehca-backend-1.onrender.com/api/projects"
         );
 
         setProjects(res.data || []);
@@ -185,7 +185,7 @@ export default function Home() {
               >
                 {p.image && (
                   <img
-                    src={`http://localhost:5000${p.image}`}
+                    src={`https://ehca-backend-1.onrender.com${p.image}`}
                     alt={p.title}
                     className="w-full h-56 object-cover"
                   />
@@ -268,7 +268,7 @@ export default function Home() {
               >
                 {p.image && (
                   <img
-                    src={`http://localhost:5000${p.image}`}
+                    src={`https://ehca-backend-1.onrender.com${p.image}`}
                     alt={p.title}
                     className="w-full h-56 object-cover"
                   />
@@ -328,7 +328,7 @@ export default function Home() {
               >
                 {p.image && (
                   <img
-                    src={`http://localhost:5000${p.image}`}
+                    src={`https://ehca-backend-1.onrender.com${p.image}`}
                     alt={p.title}
                     className="w-full h-56 object-cover"
                   />
@@ -388,7 +388,7 @@ export default function Home() {
               >
                 {p.image ? (
                   <img
-                    src={`http://localhost:5000${p.image}`}
+                    src={`https://ehca-backend-1.onrender.com${p.image}`}
                     alt={p.title}
                     className="h-72 w-full object-cover"
                   />
