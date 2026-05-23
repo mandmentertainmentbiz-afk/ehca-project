@@ -4,37 +4,43 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
-import donationRoutes from "./routes/donationRoutes.js";
 
+import donationRoutes from "./routes/donationRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import memberRoutes from "./routes/memberRoutes.js";
 
 /* ================= LOAD ENV ================= */
 dotenv.config();
+
 console.log("EMAIL USER:", process.env.EMAIL_USER);
+
 console.log(
   "EMAIL PASS EXISTS:",
   !!process.env.EMAIL_PASS
 );
-
-/* ================= ROUTES ================= */
-import projectRoutes from "./routes/projectRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-import memberRoutes from "./routes/memberRoutes.js";
 
 /* ================= APP ================= */
 const app = express();
 
 /* ================= FIX __dirname (ESM) ================= */
 const __filename = fileURLToPath(import.meta.url);
+
 const __dirname = path.dirname(__filename);
 
-/* ================= MIDDLEWARE ================= */
+/* ================= CORS ================= */
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "https://mandmentertainmentbiz-6047s-projects.vercel.app",
+      "http://localhost:5173",
+    ],
+
     credentials: true,
   })
 );
 
+/* ================= BODY PARSER ================= */
 app.use(
   express.json({
     limit: "10mb",
@@ -48,11 +54,6 @@ app.use(
   })
 );
 
-app.use(
-  "/api/donations",
-  donationRoutes
-);
-
 /* ================= STATIC FILES ================= */
 app.use(
   "/uploads",
@@ -62,15 +63,32 @@ app.use(
 );
 
 /* ================= API ROUTES ================= */
-app.use("/api/auth", authRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/members", memberRoutes);
+app.use(
+  "/api/donations",
+  donationRoutes
+);
+
+app.use(
+  "/api/auth",
+  authRoutes
+);
+
+app.use(
+  "/api/projects",
+  projectRoutes
+);
+
+app.use(
+  "/api/members",
+  memberRoutes
+);
 
 /* ================= TEST ROUTE ================= */
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "EHCA API is running successfully 🚀",
+    message:
+      "EHCA API is running successfully 🚀",
   });
 });
 
@@ -84,7 +102,7 @@ const requiredEnvVars = [
 requiredEnvVars.forEach((envVar) => {
   if (!process.env[envVar]) {
     console.error(
-      `❌ Missing required environment variable: ${envVar}`
+      `❌ Missing environment variable: ${envVar}`
     );
 
     process.exit(1);
@@ -102,19 +120,22 @@ app.use((req, res) => {
 /* ================= GLOBAL ERROR HANDLER ================= */
 app.use((err, req, res, next) => {
   console.error("🔥 SERVER ERROR:");
+
   console.error(err);
 
   res.status(500).json({
     success: false,
     error:
-      err.message || "Internal Server Error",
+      err.message ||
+      "Internal Server Error",
   });
 });
 
 /* ================= PORT ================= */
-const PORT = process.env.PORT || 5000;
+const PORT =
+  process.env.PORT || 5000;
 
-/* ================= DATABASE CONNECTION ================= */
+/* ================= START SERVER ================= */
 const startServer = async () => {
   try {
     await mongoose.connect(
@@ -128,11 +149,6 @@ const startServer = async () => {
       "✅ MongoDB connected successfully"
     );
 
-    console.log(
-      "📧 Email User:",
-      process.env.EMAIL_USER
-    );
-
     app.listen(PORT, () => {
       console.log(
         `🚀 Server running on port ${PORT}`
@@ -141,7 +157,7 @@ const startServer = async () => {
 
   } catch (err) {
     console.error(
-      "❌ MongoDB Connection Failed:"
+      "❌ MongoDB Connection Failed"
     );
 
     console.error(err.message);
@@ -150,5 +166,4 @@ const startServer = async () => {
   }
 };
 
-/* ================= START APP ================= */
 startServer();
