@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
     console.log("SUBMITTING:", payload);
 
     const res = await axios.post(
-      "http://localhost:5000/api/members",
+      "https://ehca-backend-1.onrender.com/api/members",
       payload
     );
 
