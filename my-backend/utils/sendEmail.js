@@ -46,4 +46,4 @@ const sendEmail = async ({
   }
 };
 
-export default sendEmail;
+export default sendEmail; 

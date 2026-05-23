@@ -20,7 +20,7 @@ export default function AdminDonations() {
       setLoading(true);
 
       const res = await axios.get(
-        "http://localhost:5000/api/donations",
+        "https://ehca-backend-1.onrender.com/api/donations",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +60,7 @@ export default function AdminDonations() {
       setProcessingId(id);
 
       const res = await axios.put(
-        `http://localhost:5000/api/donations/${id}/complete`,
+        `https://ehca-backend-1.onrender.com/api/donations/${id}/complete`,
         {},
         {
           headers: {
@@ -111,7 +111,7 @@ export default function AdminDonations() {
       setProcessingId(id);
 
       const res = await axios.delete(
-        `http://localhost:5000/api/donations/${id}`,
+        `https://ehca-backend-1.onrender.com/api/donations/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -13,7 +13,7 @@ export default function AdminDashboard() {
   /* ================= LOAD PROJECTS ================= */
   const fetchProjects = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/projects");
+      const res = await axios.get("https://ehca-backend-1.onrender.com/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects");
@@ -30,7 +30,7 @@ const handleDelete = async (id) => {
 
   try {
     await axios.delete(
-      `http://localhost:5000/api/projects/${id}`,
+      `https://ehca-backend-1.onrender.com/api/projects/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`, // ✅ IMPORTANT
@@ -67,7 +67,7 @@ const handleUpdate = async (e) => {
 
   try {
     const res = await axios.put(
-      `http://localhost:5000/api/projects/${editing._id}`,
+      `https://ehca-backend-1.onrender.com/api/projects/${editing._id}`,
       editing,
       {
         headers: {
