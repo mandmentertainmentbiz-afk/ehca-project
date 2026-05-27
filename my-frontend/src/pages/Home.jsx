@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import axios from "axios";
 
 /* ================= API ================= */
-const API_URL =
-  "https://ehca-project-1.onrender.com";
+const API_URL = "https://ehca-project-1.onrender.com";
+
 
 /* ================= HERO ================= */
 const HeroSlider = () => {
@@ -86,37 +86,34 @@ export default function Home() {
     useState(true);
 
   /* ================= FETCH PROJECTS ================= */
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/api/projects`
-        );
+                
+useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/projects`
+      );
 
-        console.log(
-          "Projects fetched:",
-          res.data
-        );
+      console.log("PROJECTS:", res.data);
 
-        if (Array.isArray(res.data)) {
-          setProjects(res.data);
-        } else {
-          setProjects([]);
-        }
-      } catch (err) {
-        console.error(
-          "Fetch error:",
-          err.response?.data || err.message
-        );
+      setProjects(res.data || []);
 
-        setProjects([]);
-      } finally {
-        setLoading(false);
+    } catch (err) {
+      console.error("Fetch error:", err);
+
+      if (err.response) {
+        console.error("Response:", err.response.data);
       }
-    };
 
-    fetchProjects();
-  }, []);
+      setProjects([]);
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProjects();
+}, []);
 
   /* ================= DATE ================= */
   const now = new Date();
@@ -221,7 +218,7 @@ export default function Home() {
 
         {ourProjects.length === 0 ? (
           <p className="text-center text-gray-500">
-            No projects available
+            No projects available 22222
           </p>
         ) : (
           <div className="grid md:grid-cols-3 gap-8">
@@ -233,10 +230,10 @@ export default function Home() {
               >
                 {p.image && (
                   <img
-                    src={getImageUrl(p.image)}
-                    alt={p.title}
-                    className="w-full h-56 object-cover"
-                  />
+  src={`${API_URL}${p.image}`}
+  alt={p.title}
+  className="w-full h-56 object-cover"
+/>
                 )}
 
                 <div className="p-6">
@@ -279,10 +276,10 @@ export default function Home() {
               >
                 {p.image && (
                   <img
-                    src={getImageUrl(p.image)}
-                    alt={p.title}
-                    className="w-full h-56 object-cover"
-                  />
+  src={`${API_URL}${p.image}`}
+  alt={p.title}
+  className="w-full h-56 object-cover"
+/>
                 )}
 
                 <div className="p-6">
@@ -323,10 +320,10 @@ export default function Home() {
               >
                 {p.image && (
                   <img
-                    src={getImageUrl(p.image)}
-                    alt={p.title}
-                    className="w-full h-56 object-cover"
-                  />
+  src={`${API_URL}${p.image}`}
+  alt={p.title}
+  className="w-full h-56 object-cover"
+/>
                 )}
 
                 <div className="p-6">
