@@ -5,22 +5,121 @@ import sendEmail from "../utils/sendEmail.js";
 
 const router = express.Router();
 
+/* ================= EHCA LOGO ================= */
+const EHCA_LOGO =
+  "https://ehca-project.vercel.app/images/logo.png";
+
 /* ================= GENERATE MEMBERSHIP ID ================= */
 const generateMembershipId = () => {
-  const random = Math.floor(
-    1000 + Math.random() * 9000
-  );
+  const random =
+    Math.floor(
+      1000 + Math.random() * 9000
+    );
 
   return `EHCA-${Date.now()}-${random}`;
 };
 
-/* ================= EHCA LOGO ================= */
-const EHCA_LOGO =
-  "https://yourdomain.com/logo.png";
+/* ================= EMAIL TEMPLATE ================= */
+const emailTemplate = ({
+  title,
+  message,
+  color,
+  memberName,
+  extraContent = "",
+}) => {
+  return `
+    <div style="
+      font-family: Arial, sans-serif;
+      background:#f4f7fb;
+      padding:40px 20px;
+    ">
+
+      <div style="
+        max-width:600px;
+        margin:auto;
+        background:white;
+        border-radius:14px;
+        overflow:hidden;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      ">
+
+        <!-- HEADER -->
+        <div style="
+          background:${color};
+          padding:30px;
+          text-align:center;
+        ">
+
+          <img
+            src="${EHCA_LOGO}"
+            alt="EHCA Logo"
+            style="
+              width:90px;
+              margin-bottom:10px;
+            "
+          />
+
+          <h1 style="
+            color:white;
+            margin:0;
+            font-size:28px;
+          ">
+            EHCA NGO
+          </h1>
+
+        </div>
+
+        <!-- BODY -->
+        <div style="padding:40px;">
+
+          <h2 style="
+            margin-top:0;
+            color:${color};
+          ">
+            ${title}
+          </h2>
+
+          <p>
+            Hello
+            <b>${memberName}</b>,
+          </p>
+
+          <p>
+            ${message}
+          </p>
+
+          ${extraContent}
+
+          <br />
+
+          <p>
+            Regards,<br />
+            <b>EHCA Team</b>
+          </p>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+          background:#f8fafc;
+          padding:20px;
+          text-align:center;
+          font-size:13px;
+          color:#64748b;
+        ">
+          © 2026 EHCA NGO.
+          All rights reserved.
+        </div>
+
+      </div>
+    </div>
+  `;
+};
 
 /* ================= CREATE MEMBER ================= */
 router.post("/", async (req, res) => {
   try {
+
     const {
       fullName,
       email,
@@ -40,7 +139,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    /* ================= CHECK EXISTING MEMBER ================= */
+    /* ================= CHECK EXISTING ================= */
     const existingMember =
       await Member.findOne({
         email: email.toLowerCase(),
@@ -50,20 +149,34 @@ router.post("/", async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "A membership request with this email already exists",
+          "This email already submitted a request",
       });
     }
 
     /* ================= CREATE MEMBER ================= */
     const member = new Member({
-      fullName,
-      email: email.toLowerCase(),
-      phone,
-      country,
-      organization,
-      role: role || "member",
-      message,
+      fullName: fullName.trim(),
+
+      email:
+        email.toLowerCase().trim(),
+
+      phone:
+        phone?.trim() || "",
+
+      country:
+        country?.trim() || "",
+
+      organization:
+        organization?.trim() || "",
+
+      role:
+        role || "member",
+
+      message:
+        message?.trim() || "",
+
       approved: false,
+
       status: "pending",
     });
 
@@ -79,6 +192,7 @@ router.post("/", async (req, res) => {
     });
 
   } catch (err) {
+
     console.error(
       "❌ MEMBER SUBMISSION ERROR:"
     );
@@ -87,7 +201,9 @@ router.post("/", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      error: err.message,
+      message:
+        err.message ||
+        "Failed to submit request",
     });
   }
 });
@@ -98,6 +214,7 @@ router.get(
   verifyToken,
   async (req, res) => {
     try {
+
       const members =
         await Member.find().sort({
           createdAt: -1,
@@ -110,14 +227,18 @@ router.get(
       });
 
     } catch (err) {
+
       console.error(
-        "GET MEMBERS ERROR:",
-        err
+        "❌ GET MEMBERS ERROR:"
       );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to fetch members",
       });
     }
   }
@@ -129,6 +250,7 @@ router.get(
   verifyToken,
   async (req, res) => {
     try {
+
       const member =
         await Member.findById(
           req.params.id
@@ -147,14 +269,18 @@ router.get(
       });
 
     } catch (err) {
+
       console.error(
-        "GET MEMBER ERROR:",
-        err
+        "❌ GET MEMBER ERROR:"
       );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to fetch member",
       });
     }
   }
@@ -166,6 +292,7 @@ router.put(
   verifyToken,
   async (req, res) => {
     try {
+
       const member =
         await Member.findById(
           req.params.id
@@ -178,7 +305,7 @@ router.put(
         });
       }
 
-      /* ================= GENERATE MEMBERSHIP ID ================= */
+      /* ================= UPDATE MEMBER ================= */
       if (!member.membershipId) {
         member.membershipId =
           generateMembershipId();
@@ -189,139 +316,66 @@ router.put(
 
       await member.save();
 
-      /* ================= SEND APPROVAL EMAIL ================= */
+      /* ================= SEND EMAIL ================= */
       try {
+
         await sendEmail({
           to: member.email,
+
           subject:
             "EHCA Membership Approved",
-          html: `
-            <div style="
-              font-family: Arial, sans-serif;
-              background:#f4f7fb;
-              padding:40px 20px;
-            ">
-              
+
+          html: emailTemplate({
+            title:
+              "Membership Approved 🎉",
+
+            message:
+              "We are pleased to inform you that your membership request has been approved.",
+
+            color: "#16a34a",
+
+            memberName:
+              member.fullName,
+
+            extraContent: `
               <div style="
-                max-width:600px;
-                margin:auto;
-                background:white;
-                border-radius:12px;
-                overflow:hidden;
-                box-shadow:0 4px 15px rgba(0,0,0,0.08);
+                background:#f1f5f9;
+                padding:20px;
+                border-radius:10px;
+                margin:25px 0;
               ">
 
-                <!-- HEADER -->
-                <div style="
-                  background:#0f172a;
-                  padding:30px;
-                  text-align:center;
+                <p style="
+                  margin:0 0 10px 0;
                 ">
-                  <img
-                    src="${EHCA_LOGO}"
-                    alt="EHCA Logo"
-                    style="
-                      width:90px;
-                      margin-bottom:10px;
-                    "
-                  />
+                  <b>Membership ID:</b>
+                </p>
 
-                  <h1 style="
-                    color:white;
-                    margin:0;
-                    font-size:28px;
-                  ">
-                    EHCA NGO
-                  </h1>
-                </div>
-
-                <!-- BODY -->
-                <div style="padding:40px;">
-
-                  <h2 style="
-                    color:#16a34a;
-                    margin-top:0;
-                  ">
-                    Membership Approved 🎉
-                  </h2>
-
-                  <p>
-                    Hello
-                    <b>${member.fullName}</b>,
-                  </p>
-
-                  <p>
-                    We are pleased to inform you
-                    that your EHCA membership
-                    request has been approved.
-                  </p>
-
-                  <div style="
-                    background:#f1f5f9;
-                    padding:20px;
-                    border-radius:10px;
-                    margin:25px 0;
-                  ">
-                    <p style="
-                      margin:0 0 10px 0;
-                    ">
-                      <b>Membership ID:</b>
-                    </p>
-
-                    <h2 style="
-                      margin:0;
-                      color:#2563eb;
-                      letter-spacing:2px;
-                    ">
-                      ${member.membershipId}
-                    </h2>
-                  </div>
-
-                  <p>
-                    Thank you for joining EHCA
-                    and supporting our mission
-                    to impact lives positively.
-                  </p>
-
-                  <p>
-                    We look forward to working
-                    with you.
-                  </p>
-
-                  <br />
-
-                  <p>
-                    Regards,<br />
-                    <b>EHCA Team</b>
-                  </p>
-
-                </div>
-
-                <!-- FOOTER -->
-                <div style="
-                  background:#f8fafc;
-                  padding:20px;
-                  text-align:center;
-                  font-size:13px;
-                  color:#64748b;
+                <h2 style="
+                  margin:0;
+                  color:#2563eb;
+                  letter-spacing:2px;
                 ">
-                  © 2026 EHCA NGO.
-                  All rights reserved.
-                </div>
+                  ${member.membershipId}
+                </h2>
 
               </div>
-            </div>
-          `,
+            `,
+          }),
         });
 
         console.log(
-          "✅ Approval email sent to:",
+          "✅ Approval email sent:",
           member.email
         );
 
       } catch (emailError) {
+
         console.error(
-          "❌ EMAIL ERROR:",
+          "❌ EMAIL ERROR:"
+        );
+
+        console.error(
           emailError.message
         );
       }
@@ -334,14 +388,18 @@ router.put(
       });
 
     } catch (err) {
+
       console.error(
-        "APPROVE ERROR:",
-        err
+        "❌ APPROVE MEMBER ERROR:"
       );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to approve member",
       });
     }
   }
@@ -353,6 +411,7 @@ router.put(
   verifyToken,
   async (req, res) => {
     try {
+
       const member =
         await Member.findById(
           req.params.id
@@ -370,118 +429,41 @@ router.put(
 
       await member.save();
 
-      /* ================= SEND REJECTION EMAIL ================= */
+      /* ================= SEND EMAIL ================= */
       try {
+
         await sendEmail({
           to: member.email,
+
           subject:
             "EHCA Membership Update",
-          html: `
-            <div style="
-              font-family: Arial, sans-serif;
-              background:#f4f7fb;
-              padding:40px 20px;
-            ">
-              
-              <div style="
-                max-width:600px;
-                margin:auto;
-                background:white;
-                border-radius:12px;
-                overflow:hidden;
-                box-shadow:0 4px 15px rgba(0,0,0,0.08);
-              ">
 
-                <!-- HEADER -->
-                <div style="
-                  background:#991b1b;
-                  padding:30px;
-                  text-align:center;
-                ">
-                  <img
-                    src="${EHCA_LOGO}"
-                    alt="EHCA Logo"
-                    style="
-                      width:90px;
-                      margin-bottom:10px;
-                    "
-                  />
+          html: emailTemplate({
+            title:
+              "Membership Request Update",
 
-                  <h1 style="
-                    color:white;
-                    margin:0;
-                  ">
-                    EHCA NGO
-                  </h1>
-                </div>
+            message:
+              "After reviewing your application, we regret to inform you that your request was not approved at this time.",
 
-                <!-- BODY -->
-                <div style="padding:40px;">
+            color: "#dc2626",
 
-                  <h2 style="
-                    color:#dc2626;
-                    margin-top:0;
-                  ">
-                    Membership Request Update
-                  </h2>
-
-                  <p>
-                    Hello
-                    <b>${member.fullName}</b>,
-                  </p>
-
-                  <p>
-                    Thank you for your interest
-                    in joining EHCA.
-                  </p>
-
-                  <p>
-                    After reviewing your
-                    application, we regret to
-                    inform you that your
-                    membership request was not
-                    approved at this time.
-                  </p>
-
-                  <p>
-                    You may apply again in
-                    the future.
-                  </p>
-
-                  <br />
-
-                  <p>
-                    Regards,<br />
-                    <b>EHCA Team</b>
-                  </p>
-
-                </div>
-
-                <!-- FOOTER -->
-                <div style="
-                  background:#f8fafc;
-                  padding:20px;
-                  text-align:center;
-                  font-size:13px;
-                  color:#64748b;
-                ">
-                  © 2026 EHCA NGO.
-                  All rights reserved.
-                </div>
-
-              </div>
-            </div>
-          `,
+            memberName:
+              member.fullName,
+          }),
         });
 
         console.log(
-          "✅ Rejection email sent to:",
+          "✅ Rejection email sent:",
           member.email
         );
 
       } catch (emailError) {
+
         console.error(
-          "❌ REJECTION EMAIL ERROR:",
+          "❌ REJECTION EMAIL ERROR:"
+        );
+
+        console.error(
           emailError.message
         );
       }
@@ -494,14 +476,18 @@ router.put(
       });
 
     } catch (err) {
+
       console.error(
-        "REJECT ERROR:",
-        err
+        "❌ REJECT MEMBER ERROR:"
       );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to reject member",
       });
     }
   }
@@ -513,6 +499,7 @@ router.delete(
   verifyToken,
   async (req, res) => {
     try {
+
       const member =
         await Member.findByIdAndDelete(
           req.params.id
@@ -532,14 +519,18 @@ router.delete(
       });
 
     } catch (err) {
+
       console.error(
-        "DELETE MEMBER ERROR:",
-        err
+        "❌ DELETE MEMBER ERROR:"
       );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to delete member",
       });
     }
   }

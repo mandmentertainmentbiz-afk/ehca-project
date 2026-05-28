@@ -5,6 +5,26 @@ import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
+/* ================= FORMAT TAGS ================= */
+const formatTags = (tags) => {
+  if (!tags) return [];
+
+  if (Array.isArray(tags)) {
+    return tags
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  if (typeof tags === "string") {
+    return tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
 /* ================= CREATE PROJECT ================= */
 router.post(
   "/",
@@ -12,6 +32,7 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
+
       const {
         title,
         desc,
@@ -32,49 +53,52 @@ router.post(
       /* ================= VALIDATION ================= */
       if (!title || !desc || !date) {
         return res.status(400).json({
-          error: "Title, description and date are required",
+          success: false,
+          message:
+            "Title, description and date are required",
         });
-      }
-
-      /* ================= FORMAT TAGS SAFELY ================= */
-      let formattedTags = [];
-
-      if (tags) {
-        if (Array.isArray(tags)) {
-          formattedTags = tags;
-        } else if (typeof tags === "string") {
-          formattedTags = tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag.length > 0);
-        }
       }
 
       /* ================= CREATE PROJECT ================= */
       const project = new Project({
         title: title.trim(),
+
         desc: desc.trim(),
-        shortDesc: shortDesc?.trim() || "",
+
+        shortDesc:
+          shortDesc?.trim() || "",
 
         date,
-        endDate: endDate || null,
 
-        category: category || "project",
+        endDate:
+          endDate || null,
 
-        status: status || "active",
+        category:
+          category || "project",
+
+        status:
+          status || "active",
 
         featured:
-          featured === "true" || featured === true,
+          featured === true ||
+          featured === "true",
 
-        donationGoal: Number(donationGoal) || 0,
-        donationRaised: Number(donationRaised) || 0,
+        donationGoal:
+          Number(donationGoal) || 0,
 
-        location: location?.trim() || "",
+        donationRaised:
+          Number(donationRaised) || 0,
 
-        metaTitle: metaTitle?.trim() || "",
-        metaDesc: metaDesc?.trim() || "",
+        location:
+          location?.trim() || "",
 
-        tags: formattedTags,
+        metaTitle:
+          metaTitle?.trim() || "",
+
+        metaDesc:
+          metaDesc?.trim() || "",
+
+        tags: formatTags(tags),
 
         image: req.file
           ? `/uploads/${req.file.filename}`
@@ -85,16 +109,24 @@ router.post(
 
       res.status(201).json({
         success: true,
-        message: "Project created successfully",
+        message:
+          "Project created successfully",
         project,
       });
 
     } catch (err) {
-      console.error("CREATE ERROR:", err);
+
+      console.error(
+        "❌ CREATE PROJECT ERROR:"
+      );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to create project",
       });
     }
   }
@@ -103,17 +135,27 @@ router.post(
 /* ================= GET ALL PROJECTS ================= */
 router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find().sort({
-      createdAt: -1,
-    });
 
-    res.json(projects);
+    const projects =
+      await Project.find().sort({
+        createdAt: -1,
+      });
+
+    res.status(200).json(projects);
 
   } catch (err) {
-    console.error("FETCH ERROR:", err);
+
+    console.error(
+      "❌ FETCH PROJECTS ERROR:"
+    );
+
+    console.error(err);
 
     res.status(500).json({
-      error: err.message,
+      success: false,
+      message:
+        err.message ||
+        "Failed to fetch projects",
     });
   }
 });
@@ -121,23 +163,34 @@ router.get("/", async (req, res) => {
 /* ================= GET SINGLE PROJECT ================= */
 router.get("/:id", async (req, res) => {
   try {
-    const project = await Project.findById(
-      req.params.id
-    );
+
+    const project =
+      await Project.findById(
+        req.params.id
+      );
 
     if (!project) {
       return res.status(404).json({
+        success: false,
         message: "Project not found",
       });
     }
 
-    res.json(project);
+    res.status(200).json(project);
 
   } catch (err) {
-    console.error("GET ONE ERROR:", err);
+
+    console.error(
+      "❌ GET PROJECT ERROR:"
+    );
+
+    console.error(err);
 
     res.status(500).json({
-      error: err.message,
+      success: false,
+      message:
+        err.message ||
+        "Failed to fetch project",
     });
   }
 });
@@ -149,6 +202,7 @@ router.put(
   upload.single("image"),
   async (req, res) => {
     try {
+
       const {
         title,
         desc,
@@ -166,79 +220,93 @@ router.put(
         tags,
       } = req.body;
 
-      /* ================= FORMAT TAGS SAFELY ================= */
-      let formattedTags = [];
-
-      if (tags) {
-        if (Array.isArray(tags)) {
-          formattedTags = tags;
-        } else if (typeof tags === "string") {
-          formattedTags = tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag.length > 0);
-        }
-      }
-
-      /* ================= UPDATE DATA ================= */
+      /* ================= UPDATE OBJECT ================= */
       const updatedData = {
-        title: title?.trim(),
-        desc: desc?.trim(),
-        shortDesc: shortDesc?.trim(),
+        title:
+          title?.trim(),
+
+        desc:
+          desc?.trim(),
+
+        shortDesc:
+          shortDesc?.trim() || "",
 
         date,
-        endDate: endDate || null,
+
+        endDate:
+          endDate || null,
 
         category,
+
         status,
 
         featured:
-          featured === "true" || featured === true,
+          featured === true ||
+          featured === "true",
 
-        donationGoal: Number(donationGoal) || 0,
-        donationRaised: Number(donationRaised) || 0,
+        donationGoal:
+          Number(donationGoal) || 0,
 
-        location: location?.trim() || "",
+        donationRaised:
+          Number(donationRaised) || 0,
 
-        metaTitle: metaTitle?.trim() || "",
-        metaDesc: metaDesc?.trim() || "",
+        location:
+          location?.trim() || "",
 
-        tags: formattedTags,
+        metaTitle:
+          metaTitle?.trim() || "",
+
+        metaDesc:
+          metaDesc?.trim() || "",
+
+        tags:
+          formatTags(tags),
       };
 
       /* ================= IMAGE ================= */
       if (req.file) {
-        updatedData.image = `/uploads/${req.file.filename}`;
+        updatedData.image =
+          `/uploads/${req.file.filename}`;
       }
 
-      /* ================= UPDATE PROJECT ================= */
-      const project = await Project.findByIdAndUpdate(
-        req.params.id,
-        updatedData,
-        {
-          new: true,
-          runValidators: true,
-        }
-      );
+      /* ================= UPDATE ================= */
+      const project =
+        await Project.findByIdAndUpdate(
+          req.params.id,
+          updatedData,
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
 
       if (!project) {
         return res.status(404).json({
+          success: false,
           message: "Project not found",
         });
       }
 
-      res.json({
+      res.status(200).json({
         success: true,
-        message: "Project updated successfully",
+        message:
+          "Project updated successfully",
         project,
       });
 
     } catch (err) {
-      console.error("UPDATE ERROR:", err);
+
+      console.error(
+        "❌ UPDATE PROJECT ERROR:"
+      );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to update project",
       });
     }
   }
@@ -250,27 +318,38 @@ router.delete(
   verifyToken,
   async (req, res) => {
     try {
-      const project = await Project.findByIdAndDelete(
-        req.params.id
-      );
+
+      const project =
+        await Project.findByIdAndDelete(
+          req.params.id
+        );
 
       if (!project) {
         return res.status(404).json({
+          success: false,
           message: "Project not found",
         });
       }
 
-      res.json({
+      res.status(200).json({
         success: true,
-        message: "Project deleted successfully",
+        message:
+          "Project deleted successfully",
       });
 
     } catch (err) {
-      console.error("DELETE ERROR:", err);
+
+      console.error(
+        "❌ DELETE PROJECT ERROR:"
+      );
+
+      console.error(err);
 
       res.status(500).json({
         success: false,
-        error: err.message,
+        message:
+          err.message ||
+          "Failed to delete project",
       });
     }
   }

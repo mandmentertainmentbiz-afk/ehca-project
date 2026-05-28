@@ -1,8 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 
+/* ================= API URL ================= */
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://ehca-project-1.onrender.com";
+
 export default function SupportMissionForm() {
   const [showForm, setShowForm] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -25,14 +31,24 @@ export default function SupportMissionForm() {
     }));
   };
 
+  /* ================= RESET FORM ================= */
+  const resetForm = () => {
+    setForm({
+      fullName: "",
+      email: "",
+      phone: "",
+      country: "",
+      organization: "",
+      role: "member",
+      message: "",
+    });
+  };
+
   /* ================= SUBMIT ================= */
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    setLoading(true);
-
-    // ✅ VALIDATION
+    /* ================= VALIDATION ================= */
     if (!form.fullName.trim()) {
       alert("Full name is required");
       return;
@@ -43,62 +59,61 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    const payload = {
-      fullName: form.fullName,
-      email: form.email,
-      phone: form.phone,
-      country: form.country,
-      organization: form.organization,
-      role: form.role,
-      message: form.message,
-    };
+    try {
+      setLoading(true);
 
-    console.log("SUBMITTING:", payload);
+      const payload = {
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        country: form.country.trim(),
+        organization: form.organization.trim(),
+        role: form.role,
+        message: form.message.trim(),
+      };
 
-    const res = await axios.post(
-      "https://ehca-backend-1.onrender.com/api/members",
-      payload
-    );
+      console.log("📤 SUBMITTING:", payload);
 
-    console.log("SUCCESS:", res.data);
+      const res = await axios.post(
+        `${API_URL}/api/members`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-    alert(
-      res.data.message ||
-        "Request submitted successfully"
-    );
+          withCredentials: true,
+        }
+      );
 
-    // ✅ RESET FORM
-    setForm({
-      fullName: "",
-      email: "",
-      phone: "",
-      country: "",
-      organization: "",
-      role: "member",
-      message: "",
-    });
+      console.log("✅ SUCCESS:", res.data);
 
-    // ✅ HIDE FORM
-    setShowForm(false);
+      alert(
+        res.data?.message ||
+          "Request submitted successfully"
+      );
 
-  } catch (err) {
-    console.error(
-      "❌ SUBMISSION ERROR:",
-      err
-    );
+      resetForm();
 
-    console.log(err.response?.data);
+      setShowForm(false);
 
-    alert(
-      err.response?.data?.message ||
-        err.response?.data?.error ||
-        "Something went wrong"
-    );
+    } catch (err) {
+      console.error(
+        "❌ SUBMISSION ERROR:",
+        err.response?.data || err.message
+      );
 
-  } finally {
-    setLoading(false);
-  }
-};
+      alert(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Network error. Please try again."
+      );
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="py-24 px-6 md:px-20 bg-white">
 
@@ -118,16 +133,18 @@ const handleSubmit = async (e) => {
       {showForm && (
         <div className="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden grid md:grid-cols-2">
 
-          {/* ================= LEFT SIDE ================= */}
+          {/* ================= LEFT ================= */}
           <div className="bg-blue-900 text-white p-10 flex flex-col justify-center">
+
             <h2 className="text-4xl font-extrabold mb-6 leading-tight">
               Support Our Mission
             </h2>
 
             <p className="text-gray-200 leading-8 mb-8">
-              Become part of EHCA by joining as a member
-              or partnering with us to transform lives,
-              empower children and strengthen communities.
+              Become part of EHCA by joining as a
+              member or partnering with us to
+              transform lives, empower children and
+              strengthen communities.
             </p>
 
             <div className="space-y-6">
@@ -159,7 +176,7 @@ const handleSubmit = async (e) => {
             </div>
           </div>
 
-          {/* ================= RIGHT SIDE ================= */}
+          {/* ================= RIGHT ================= */}
           <div className="p-10 bg-gray-50">
 
             {/* CLOSE BUTTON */}
@@ -295,7 +312,7 @@ const handleSubmit = async (e) => {
                 />
               </div>
 
-              {/* BUTTON */}
+              {/* SUBMIT BUTTON */}
               <button
                 type="submit"
                 disabled={loading}

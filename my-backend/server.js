@@ -1,10 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
 
+/* ================= ROUTES ================= */
 import donationRoutes from "./routes/donationRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -13,30 +14,56 @@ import memberRoutes from "./routes/memberRoutes.js";
 /* ================= LOAD ENV ================= */
 dotenv.config();
 
-console.log("EMAIL USER:", process.env.EMAIL_USER);
-
-console.log(
-  "EMAIL PASS EXISTS:",
-  !!process.env.EMAIL_PASS
-);
-
 /* ================= APP ================= */
 const app = express();
 
-/* ================= FIX __dirname (ESM) ================= */
+/* ================= __dirname FIX ================= */
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
+/* ================= TRUST PROXY ================= */
+app.set("trust proxy", 1);
+
 /* ================= CORS ================= */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://ehca-project.vercel.app",
+  "https://mandmentertainmentbiz-6047s-projects.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "https://mandmentertainmentbiz-6047s-projects.vercel.app",
-      "http://localhost:5173",
-    ],
+    origin: function (origin, callback) {
+
+      // allow requests with no origin
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(
+          new Error("CORS not allowed")
+        );
+      }
+    },
 
     credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
   })
 );
 
@@ -62,15 +89,19 @@ app.use(
   )
 );
 
+/* ================= HEALTH ROUTE ================= */
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message:
+      "EHCA Backend API running successfully 🚀",
+  });
+});
+
 /* ================= API ROUTES ================= */
 app.use(
   "/api/donations",
   donationRoutes
-);
-
-app.use(
-  "/api/auth",
-  authRoutes
 );
 
 app.use(
@@ -79,35 +110,14 @@ app.use(
 );
 
 app.use(
+  "/api/auth",
+  authRoutes
+);
+
+app.use(
   "/api/members",
   memberRoutes
 );
-
-/* ================= TEST ROUTE ================= */
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message:
-      "EHCA API is running successfully 🚀",
-  });
-});
-
-/* ================= ENV VALIDATION ================= */
-const requiredEnvVars = [
-  "MONGO_URI",
-  "EMAIL_USER",
-  "EMAIL_PASS",
-];
-
-requiredEnvVars.forEach((envVar) => {
-  if (!process.env[envVar]) {
-    console.error(
-      `❌ Missing environment variable: ${envVar}`
-    );
-
-    process.exit(1);
-  }
-});
 
 /* ================= 404 HANDLER ================= */
 app.use((req, res) => {
@@ -119,16 +129,32 @@ app.use((req, res) => {
 
 /* ================= GLOBAL ERROR HANDLER ================= */
 app.use((err, req, res, next) => {
-  console.error("🔥 SERVER ERROR:");
+  console.error("🔥 SERVER ERROR");
 
   console.error(err);
 
   res.status(500).json({
     success: false,
-    error:
+    message:
       err.message ||
       "Internal Server Error",
   });
+});
+
+/* ================= ENV VALIDATION ================= */
+const requiredEnvVars = [
+  "MONGO_URI",
+];
+
+requiredEnvVars.forEach((envVar) => {
+  if (!process.env[envVar]) {
+
+    console.error(
+      `❌ Missing environment variable: ${envVar}`
+    );
+
+    process.exit(1);
+  }
 });
 
 /* ================= PORT ================= */
@@ -138,6 +164,7 @@ const PORT =
 /* ================= START SERVER ================= */
 const startServer = async () => {
   try {
+
     await mongoose.connect(
       process.env.MONGO_URI,
       {
@@ -150,12 +177,15 @@ const startServer = async () => {
     );
 
     app.listen(PORT, () => {
+
       console.log(
         `🚀 Server running on port ${PORT}`
       );
+
     });
 
   } catch (err) {
+
     console.error(
       "❌ MongoDB Connection Failed"
     );
