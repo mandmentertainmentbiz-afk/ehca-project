@@ -7,24 +7,26 @@ export default function About() {
 
       {/* ================= HERO ================= */}
       <section
-        className="relative h-[100vh] flex items-center justify-center text-center bg-cover bg-center"
+        className="relative h-screen flex items-center justify-center text-center bg-cover bg-center"
         style={{
           backgroundImage: "url('/images/banner8.png')",
         }}
       >
-        <div className="absolute inset-0 bg-blue-950/40" />
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-blue-950/60" />
 
+        {/* CONTENT */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="relative z-10 px-6"
+          className="relative z-10 px-6 max-w-4xl"
         >
-          <p className="text-5xl md:text-7xl font-extrabold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6">
             About EHCA
-          </p>
+          </h1>
 
-          <p className="text-xl text-gray-200 max-w-3xl mx-auto">
+          <p className="text-lg md:text-2xl text-gray-200 leading-8">
             Elevate Hope & Care Association is committed
             to transforming lives through compassion,
             education, healthcare and community support.
@@ -34,13 +36,14 @@ export default function About() {
 
       {/* ================= WHO WE ARE ================= */}
       <section className="py-20 px-6 md:px-20 flex flex-col md:flex-row gap-12 items-center">
+        
         <motion.img
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
           src="/images/img1.jpg"
           alt="Who we are"
-          className="w-full md:w-1/2 rounded-3xl shadow-2xl object-cover"
+          className="w-full md:w-1/2 h-[500px] object-cover rounded-3xl shadow-2xl"
         />
 
         <motion.div
@@ -49,7 +52,7 @@ export default function About() {
           transition={{ duration: 0.8 }}
           className="md:w-1/2"
         >
-          <h2 className="text-4xl font-bold mb-6">
+          <h2 className="text-4xl font-bold mb-6 text-blue-900">
             Who We Are
           </h2>
 
@@ -66,10 +69,12 @@ export default function About() {
             to thrive regardless of background.
           </p>
         </motion.div>
+
       </section>
 
       {/* ================= MISSION & VISION ================= */}
       <section className="py-20 bg-gray-50 px-6 md:px-20">
+        
         <div className="grid md:grid-cols-2 gap-10">
 
           {/* MISSION */}
@@ -106,10 +111,12 @@ export default function About() {
           </motion.div>
 
         </div>
+
       </section>
 
       {/* ================= CORE VALUES ================= */}
       <section className="py-20 px-6 md:px-20">
+
         <h2 className="text-4xl font-bold text-center mb-14">
           Our Core Values
         </h2>
@@ -150,10 +157,12 @@ export default function About() {
           ))}
 
         </div>
+
       </section>
 
       {/* ================= IMPACT ================= */}
       <section className="py-20 bg-blue-900 text-white text-center">
+
         <h2 className="text-4xl font-bold mb-12">
           Our Impact
         </h2>
@@ -190,22 +199,28 @@ export default function About() {
           ))}
 
         </div>
+
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-24 px-6 text-center bg-gray-50">
+      <section className="py-24 px-6 bg-gray-50 text-center">
+
         <h2 className="text-5xl font-extrabold mb-6">
           Join Us in Making a Difference
         </h2>
 
-        <p className="text-gray-600  mx-auto mb-10 text-lg">
+        <p className="text-gray-600 max-w-3xl mx-auto mb-12 text-lg leading-8">
           Together we can transform lives and create
           hope for children and communities in need.
         </p>
 
-        <SupportMissionForm /> 
+        {/* FORM */}
+        <div className="max-w-4xl mx-auto">
+          <SupportMissionForm />
+        </div>
+
       </section>
-      
+
     </div>
   );
 }

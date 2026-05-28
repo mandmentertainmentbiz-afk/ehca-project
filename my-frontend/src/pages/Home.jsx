@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 
+
+
 /* ================= API ================= */
-const API_URL = "https://ehca-project-1.onrender.com";
+const API_URL =
+  "https://ehca-project-1.onrender.com";
 
 
 /* ================= HERO ================= */
@@ -86,24 +89,35 @@ export default function Home() {
     useState(true);
 
   /* ================= FETCH PROJECTS ================= */
-                
-useEffect(() => {
+      useEffect(() => {
   const fetchProjects = async () => {
     try {
+      setLoading(true);
+
       const res = await axios.get(
-        `${API_URL}/api/projects`
+  `${API_URL}/api/projects`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      console.log("PROJECTS:", res.data);
+      console.log("✅ PROJECTS:", res.data);
 
-      setProjects(res.data || []);
+      // Ensure data is always an array
+      setProjects(
+        Array.isArray(res.data)
+          ? res.data
+          : res.data.projects || []
+      );
 
     } catch (err) {
-      console.error("Fetch error:", err);
-
-      if (err.response) {
-        console.error("Response:", err.response.data);
-      }
+      console.error(
+        "❌ Fetch error:",
+        err.response?.data || err.message
+      );
 
       setProjects([]);
 
@@ -320,7 +334,7 @@ useEffect(() => {
               >
                 {p.image && (
                   <img
-  src={`${API_URL}${p.image}`}
+ src={`${API_URL}${p.image}`}
   alt={p.title}
   className="w-full h-56 object-cover"
 />
