@@ -14,7 +14,7 @@ export default function Login() {
 
     try {
       const res = await axios.post(
-        "https://ehca-backend-1.onrender.com/api/auth/login",
+        "https://ehca-project-1.onrender.com/api/auth/login",
         form
       );
 

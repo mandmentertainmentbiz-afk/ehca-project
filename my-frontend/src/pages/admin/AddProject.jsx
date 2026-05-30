@@ -84,7 +84,7 @@ export default function AddProject() {
       }
 
       const res = await axios.post(
-        "https://ehca-backend-1.onrender.com/api/projects",
+        "https://ehca-project-1.onrender.com/api/projects",
         formData,
         {
           headers: {
