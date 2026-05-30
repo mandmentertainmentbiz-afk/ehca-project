@@ -12,7 +12,7 @@ export default function AdminMembers() {
 
   /* ================= API URL ================= */
   const API_URL =
-    "https://ehca-backend-1.onrender.com/api/members";
+    "https://ehca-project-1.onrender.com/api/members";
 
   /* ================= FETCH MEMBERS ================= */
   const fetchMembers = async () => {
