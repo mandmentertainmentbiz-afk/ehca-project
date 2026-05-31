@@ -2,220 +2,271 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 
+
+
+/* ================= API ================= */
+const API_URL =
+  "https://ehca-project-1.onrender.com";
+
+
 /* ================= HERO ================= */
 const HeroSlider = () => {
-const images = [
-"/images/banner8.png",
-"/images/img1.jpg",
-"/images/img2.jpg",
-"/images/img3.jpg",
-];
+  const images = [
+    "/images/banner8.png",
+    "/images/img1.jpg",
+    "/images/img2.jpg",
+    "/images/img3.jpg",
+  ];
 
-const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(0);
 
-const savedTitle = localStorage.getItem("title");
-const savedDesc = localStorage.getItem("desc");
+  const savedTitle =
+    localStorage.getItem("title");
 
-useEffect(() => {
-const interval = setInterval(() => {
-setIndex((prev) => (prev + 1) % images.length);
-}, 5000);
+  const savedDesc =
+    localStorage.getItem("desc");
 
-return () => clearInterval(interval);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex(
+        (prev) => (prev + 1) % images.length
+      );
+    }, 5000);
 
-}, [images.length]);
+    return () => clearInterval(interval);
+  }, []);
 
-return (
-<section className="relative min-h-screen flex items-center overflow-hidden">
-{/* BACKGROUND */}
-<div
-className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
-style={{
-backgroundImage: url(${images[index]}),
-}}
-/>
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* BACKGROUND */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+        style={{
+          backgroundImage: `url(${images[index]})`,
+        }}
+      />
 
-{/* OVERLAY */}  
-  <div className="absolute inset-0 bg-gradient-to-r from-blue-950/90 via-blue-800/30 to-pink-500/30" />  
+      {/* OVERLAY */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-950/90 via-blue-800/40 to-pink-500/30" />
 
-  {/* CONTENT */}  
-  <div className="relative z-10 px-6 md:px-20 max-w-3xl text-white">  
-    <motion.div  
-      key={index}  
-      initial={{ opacity: 0, y: 40 }}  
-      animate={{ opacity: 1, y: 0 }}  
-      transition={{ duration: 1 }}  
-    >  
-      <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">  
-        {savedTitle ||  
-          "Elevate Hope & Care Association"}  
-      </h1>  
+      {/* CONTENT */}
+      <div className="relative z-10 px-6 md:px-20 max-w-3xl text-white">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+            {savedTitle ||
+              "Elevate Hope & Care Association"}
+          </h1>
 
-      <p className="text-lg md:text-xl text-gray-200 mb-8">  
-        {savedDesc ||  
-          "Transforming lives through love, care and education."}  
-      </p>  
+          <p className="text-lg md:text-xl text-gray-200 mb-8">
+            {savedDesc ||
+              "Transforming lives through love, care and education."}
+          </p>
 
-      <div className="flex gap-4 flex-wrap">  
-        <button className="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-xl font-semibold transition">  
-          Donate Now  
-        </button>  
+          <div className="flex gap-4 flex-wrap">
+            <button className="bg-pink-500 hover:bg-pink-600 px-6 py-3 rounded-xl font-semibold transition">
+              Donate Now
+            </button>
 
-        <button className="border border-white px-6 py-3 rounded-xl hover:bg-white hover:text-blue-900 transition">  
-          Learn More  
-        </button>  
-      </div>  
-    </motion.div>  
-  </div>  
-</section>
-
-);
+            <button className="border border-white px-6 py-3 rounded-xl hover:bg-white hover:text-blue-900 transition">
+              Learn More
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 };
 
 /* ================= HOME ================= */
 export default function Home() {
-const [projects, setProjects] = useState([]);
-const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] =
+    useState(true);
 
-/* ================= FETCH PROJECTS ================= */
-useEffect(() => {
-const fetchProjects = async () => {
-try {
-const res = await axios.get(
-"https://ehca-project-1.onrender.com/api/projects"
-);
+  /* ================= FETCH PROJECTS ================= */
+      useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
 
-setProjects(res.data || []);  
+      const res = await axios.get(
+  `${API_URL}/api/projects`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  } catch (err) {  
-    console.error("Fetch error:", err);  
-    setProjects([]);  
+      console.log("✅ PROJECTS:", res.data);
 
-  } finally {  
-    setLoading(false);  
-  }  
-};  
+      // Ensure data is always an array
+      setProjects(
+        Array.isArray(res.data)
+          ? res.data
+          : res.data.projects || []
+      );
 
-fetchProjects();
+    } catch (err) {
+      console.error(
+        "❌ Fetch error:",
+        err.response?.data || err.message
+      );
 
+      setProjects([]);
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProjects();
 }, []);
 
-/* ================= DATE ================= */
-const now = new Date();
+  /* ================= DATE ================= */
+  const now = new Date();
 
-/* ================= OUR PROJECTS ================= */
-const ourProjects = projects.filter(
-(p) =>
-p.category === "project"
-);
+  /* ================= OUR PROJECTS ================= */
+  const ourProjects = projects.filter(
+    (p) =>
+      p.category?.toLowerCase() ===
+      "project"
+  );
 
-/* ================= ONGOING PROJECTS ================= */
-const ongoingProjects = projects.filter((p) => {
-const projectDate = new Date(p.date);
+  /* ================= ONGOING ================= */
+  const ongoingProjects = projects.filter(
+    (p) => {
+      const projectDate = new Date(p.date);
 
-// Event still active until end of current day  
-projectDate.setHours(23, 59, 59, 999);  
+      projectDate.setHours(
+        23,
+        59,
+        59,
+        999
+      );
 
-return (  
-  p.category === "ongoing" &&  
-  now <= projectDate  
-);
+      return (
+        p.category?.toLowerCase() ===
+          "ongoing" && now <= projectDate
+      );
+    }
+  );
 
-});
+  /* ================= UPCOMING ================= */
+  const upcomingProjects =
+    projects.filter(
+      (p) =>
+        p.category?.toLowerCase() ===
+        "upcoming"
+    );
 
-/* ================= UPCOMING PROJECTS ================= */
-const upcomingProjects = projects.filter(
-(p) => p.category === "upcoming"
-);
+  /* ================= PAST EVENTS ================= */
+  const pastEvents = projects.filter(
+    (p) => {
+      const projectDate = new Date(p.date);
 
-/* ================= PAST EVENTS ================= */
-const pastEvents = projects.filter((p) => {
-const projectDate = new Date(p.date);
+      projectDate.setHours(
+        23,
+        59,
+        59,
+        999
+      );
 
-// Event becomes past AFTER 11:59PM  
-projectDate.setHours(23, 59, 59, 999);  
+      return (
+        now > projectDate &&
+        p.category?.toLowerCase() !==
+          "project"
+      );
+    }
+  );
 
-return (  
-  now > projectDate &&  
-  p.category !== "project"  
-);
+  /* ================= NEXT UPCOMING ================= */
+  const nextProject =
+    [...upcomingProjects].sort(
+      (a, b) =>
+        new Date(a.date) -
+        new Date(b.date)
+    )[0] || null;
 
-});
+  /* ================= IMAGE URL ================= */
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "";
 
-/* ================= NEXT UPCOMING ================= */
-const nextProject =
-[...upcomingProjects]
-.sort(
-(a, b) =>
-new Date(a.date) -
-new Date(b.date)
-)[0] || null;
+    if (imagePath.startsWith("http")) {
+      return imagePath;
+    }
 
-/* ================= LOADING ================= */
-if (loading) {
-return (
-<div className="h-screen flex justify-center items-center text-2xl font-bold">
-Loading...
-</div>
-);
-}
+    return `${API_URL}${imagePath}`;
+  };
 
-/* ================= UI ================= */
-return (
-<div className="font-sans text-gray-800">
-<HeroSlider />
+  /* ================= LOADING ================= */
+  if (loading) {
+    return (
+      <div className="h-screen flex justify-center items-center text-2xl font-bold">
+        Loading...
+      </div>
+    );
+  }
 
-{/* ================= OUR PROJECTS ================= */}  
-  <section className="py-20 px-6 md:px-20 bg-gray-50">  
-    <h2 className="text-4xl font-bold text-center mb-4">  
-      Our Projects  
-    </h2>  
+  /* ================= UI ================= */
+  return (
+    <div className="font-sans text-gray-800">
+      <HeroSlider />
 
-    <p className="text-center text-gray-500 mb-12">  
-      Projects and initiatives we have carried out  
-      across communities.  
-    </p>  
+      {/* ================= OUR PROJECTS ================= */}
+      <section className="py-20 px-6 md:px-20 bg-gray-50">
+        <h2 className="text-4xl font-bold text-center mb-4">
+          Our Projects
+        </h2>
 
-    {ourProjects.length === 0 ? (  
-      <p className="text-center text-gray-500">  
-        No projects available  
-      </p>  
-    ) : (  
-      <div className="grid md:grid-cols-3 gap-8">  
-        {ourProjects.map((p) => (  
-          <motion.div  
-            key={p._id}  
-            whileHover={{ y: -5 }}  
-            className="bg-white rounded-2xl shadow-lg overflow-hidden"  
-          >  
-            {p.image && (  
-              <img  
-                src={`https://ehca-project-1.onrender.com${p.image}`}  
-                alt={p.title}  
-                className="w-full h-56 object-cover"  
-              />  
-            )}  
+        <p className="text-center text-gray-500 mb-12">
+          Projects and initiatives we have
+          carried out across communities.
+        </p>
 
-            <div className="p-6">  
-              <h3 className="text-xl font-bold mb-2">  
-                {p.title}  
-              </h3>  
+        {ourProjects.length === 0 ? (
+          <p className="text-center text-gray-500">
+            No projects available 22222
+          </p>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-8">
+            {ourProjects.map((p) => (
+              <motion.div
+                key={p._id}
+                whileHover={{ y: -5 }}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden"
+              >
+                {p.image && (
+                  <img
+  src={`${API_URL}${p.image}`}
+  alt={p.title}
+  className="w-full h-56 object-cover"
+/>
+                )}
 
-              <p className="text-gray-600 mb-4 line-clamp-3">  
-                {p.shortDesc || p.desc}  
-              </p>  
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">
+                    {p.title}
+                  </h3>
 
-              <button className="text-blue-700 font-semibold hover:text-blue-900 transition">  
-                Read More →  
-              </button>  
-            </div>  
-          </motion.div>  
-        ))}  
-      </div>  
-    )}  
-  </section>  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    {p.shortDesc || p.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
 
-  {/* ================= ABOUT ================= */}  
+      
+ {/* ================= ABOUT ================= */}  
   <section className="py-20 px-6 md:px-20 flex flex-col md:flex-row items-center gap-12">  
     <motion.img  
       initial={{ opacity: 0, x: -40 }}  
@@ -249,182 +300,97 @@ return (
     </motion.div>  
   </section>  
 
-  {/* ================= ONGOING ================= */}  
-  <section className="py-20 px-6 md:px-20 bg-white">  
-    <h2 className="text-4xl font-bold text-center mb-4">  
-      Ongoing Projects  
-    </h2>  
+      {/* ================= ONGOING ================= */}
+      <section className="py-20 px-6 md:px-20 bg-white">
+        <h2 className="text-4xl font-bold text-center mb-4">
+          Ongoing Projects
+        </h2>
 
-    <p className="text-center text-gray-500 mb-12">  
-      Current programs actively changing lives.  
-    </p>  
+        <p className="text-center text-gray-500 mb-12">
+          Current programs actively changing
+          lives.
+        </p>
 
-    {ongoingProjects.length === 0 ? (  
-      <p className="text-center text-gray-500">  
-        No ongoing projects  
-      </p>  
-    ) : (  
-      <div className="grid md:grid-cols-3 gap-8">  
-        {ongoingProjects.map((p) => (  
-          <motion.div  
-            key={p._id}  
-            whileHover={{ scale: 1.02 }}  
-            className="rounded-2xl overflow-hidden shadow-lg bg-gray-50"  
-          >  
-            {p.image && (  
-              <img  
-                src={`https://ehca-project-1.onrender.com${p.image}`}  
-                alt={p.title}  
-                className="w-full h-56 object-cover"  
-              />  
-            )}  
+        {ongoingProjects.length === 0 ? (
+          <p className="text-center text-gray-500">
+            No ongoing projects
+          </p>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-8">
+            {ongoingProjects.map((p) => (
+              <motion.div
+                key={p._id}
+                whileHover={{ scale: 1.02 }}
+                className="rounded-2xl overflow-hidden shadow-lg bg-gray-50"
+              >
+                {p.image && (
+                  <img
+  src={`${API_URL}${p.image}`}
+  alt={p.title}
+  className="w-full h-56 object-cover"
+/>
+                )}
 
-            <div className="p-6">  
-              <div className="flex justify-between items-center mb-3">  
-                <span className="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full">  
-                  Active  
-                </span>  
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">
+                    {p.title}
+                  </h3>
 
-                <span className="text-sm text-gray-500">  
-                  {new Date(  
-                    p.date  
-                  ).toLocaleDateString()}  
-                </span>  
-              </div>  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    {p.shortDesc || p.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
 
-              <h3 className="text-xl font-bold mb-2">  
-                {p.title}  
-              </h3>  
+      {/* ================= UPCOMING ================= */}
+      <section className="py-20 px-6 md:px-20 bg-gray-100">
+        <h2 className="text-4xl font-bold text-center mb-4">
+          Upcoming Projects
+        </h2>
 
-              <p className="text-gray-600 mb-4 line-clamp-3">  
-                {p.shortDesc || p.desc}  
-              </p>  
+        <p className="text-center text-gray-500 mb-12">
+          Future outreach and impact programs.
+        </p>
 
-              <button className="text-blue-700 font-semibold hover:text-blue-900 transition">  
-                Read More →  
-              </button>  
-            </div>  
-          </motion.div>  
-        ))}  
-      </div>  
-    )}  
-  </section>  
+        {upcomingProjects.length === 0 ? (
+          <p className="text-center text-gray-500">
+            No upcoming projects
+          </p>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-8">
+            {upcomingProjects.map((p) => (
+              <div
+                key={p._id}
+                className="bg-white rounded-2xl shadow-lg overflow-hidden"
+              >
+                {p.image && (
+                  <img
+ src={`${API_URL}${p.image}`}
+  alt={p.title}
+  className="w-full h-56 object-cover"
+/>
+                )}
 
-  {/* ================= UPCOMING ================= */}  
-  <section className="py-20 px-6 md:px-20 bg-gray-100">  
-    <h2 className="text-4xl font-bold text-center mb-4">  
-      Upcoming Projects  
-    </h2>  
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2">
+                    {p.title}
+                  </h3>
 
-    <p className="text-center text-gray-500 mb-12">  
-      Future outreach and impact programs.  
-    </p>  
+                  <p className="text-gray-600 mb-4 line-clamp-3">
+                    {p.shortDesc || p.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
-    {upcomingProjects.length === 0 ? (  
-      <p className="text-center text-gray-500">  
-        No upcoming projects  
-      </p>  
-    ) : (  
-      <div className="grid md:grid-cols-3 gap-8">  
-        {upcomingProjects.map((p) => (  
-          <div  
-            key={p._id}  
-            className="bg-white rounded-2xl shadow-lg overflow-hidden"  
-          >  
-            {p.image && (  
-              <img  
-                src={`https://ehca-project-1.onrender.com${p.image}`}  
-                alt={p.title}  
-                className="w-full h-56 object-cover"  
-              />  
-            )}  
-
-            <div className="p-6">  
-              <span className="bg-yellow-100 text-yellow-700 text-sm px-3 py-1 rounded-full">  
-                Upcoming  
-              </span>  
-
-              <h3 className="text-xl font-bold mt-4 mb-2">  
-                {p.title}  
-              </h3>  
-
-              <p className="text-gray-600 mb-4 line-clamp-3">  
-                {p.shortDesc || p.desc}  
-              </p>  
-
-              <p className="text-blue-700 font-semibold mb-4">  
-                {new Date(  
-                  p.date  
-                ).toLocaleDateString()}  
-              </p>  
-
-              <button className="text-blue-700 font-semibold hover:text-blue-900 transition">  
-                Read More →  
-              </button>  
-            </div>  
-          </div>  
-        ))}  
-      </div>  
-    )}  
-  </section>  
-
-  {/* ================= PAST EVENTS ================= */}  
-  <section className="py-20 px-6 md:px-20">  
-    <h2 className="text-4xl font-bold text-center mb-4">  
-      Past Events & Gallery  
-    </h2>  
-
-    <p className="text-center text-gray-500 mb-12">  
-      Moments and achievements from previous  
-      outreach events.  
-    </p>  
-
-    {pastEvents.length === 0 ? (  
-      <p className="text-center text-gray-500">  
-        No past events  
-      </p>  
-    ) : (  
-      <div className="grid md:grid-cols-3 gap-6">  
-        {pastEvents.map((p) => (  
-          <motion.div  
-            key={p._id}  
-            whileHover={{ scale: 1.03 }}  
-            className="relative overflow-hidden rounded-2xl shadow-lg group"  
-          >  
-            {p.image ? (  
-              <img  
-                src={`https://ehca-project-1.onrender.com${p.image}`}  
-                alt={p.title}  
-                className="h-72 w-full object-cover"  
-              />  
-            ) : (  
-              <div className="h-72 bg-gray-300 flex items-center justify-center text-gray-600">  
-                No Image  
-              </div>  
-            )}  
-
-            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition flex flex-col justify-center items-center text-center text-white p-6">  
-              <h3 className="text-2xl font-bold mb-2">  
-                {p.title}  
-              </h3>  
-
-              <p className="mb-3 line-clamp-4">  
-                {p.shortDesc || p.desc}  
-              </p>  
-
-              <span className="text-sm text-gray-300">  
-                {new Date(  
-                  p.date  
-                ).toLocaleDateString()}  
-              </span>  
-            </div>  
-          </motion.div>  
-        ))}  
-      </div>  
-    )}  
-  </section>  
-
-  {/* ================= CTA ================= */}  
+      {/* ================= CTA ================= */}  
   <section  
     className="relative text-white text-center py-24 px-6 bg-cover bg-center"  
     style={{  
@@ -499,7 +465,6 @@ return (
       ))}  
     </div>  
   </section>  
-</div>
-
-);
+    </div>
+  );
 }
