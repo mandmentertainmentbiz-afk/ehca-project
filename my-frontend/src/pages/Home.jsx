@@ -390,6 +390,65 @@ export default function Home() {
         )}
       </section>
 
+      
+  {/* ================= PAST EVENTS ================= */}
+<section className="py-20 px-6 md:px-20 bg-white">
+  <h2 className="text-4xl font-bold text-center mb-4">
+    Past Events & Gallery
+  </h2>
+
+  <p className="text-center text-gray-500 mb-12">
+    Moments and achievements from previous outreach events.
+  </p>
+
+  {pastEvents.length === 0 ? (
+    <p className="text-center text-gray-500">
+      No past events available
+    </p>
+  ) : (
+    <div className="grid md:grid-cols-3 gap-6">
+      {pastEvents.map((p) => (
+        <motion.div
+          key={p._id}
+          whileHover={{ scale: 1.03 }}
+          className="relative overflow-hidden rounded-2xl shadow-lg group bg-white"
+        >
+          {p.image ? (
+            <img
+              src={getImageUrl(p.image)}
+              alt={p.title}
+              className="h-72 w-full object-cover"
+              onError={(e) => {
+                e.target.src = "/images/no-image.jpg";
+              }}
+            />
+          ) : (
+            <div className="h-72 bg-gray-200 flex items-center justify-center text-gray-500">
+              No Image Available
+            </div>
+          )}
+
+          <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center items-center text-center text-white p-6">
+            <h3 className="text-2xl font-bold mb-2">
+              {p.title}
+            </h3>
+
+            <p className="mb-3 line-clamp-4">
+              {p.shortDesc || p.desc}
+            </p>
+
+            <span className="text-sm text-gray-300">
+              {p.date
+                ? new Date(p.date).toLocaleDateString()
+                : "No Date"}
+            </span>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  )}
+</section>
+
       {/* ================= CTA ================= */}  
   <section  
     className="relative text-white text-center py-24 px-6 bg-cover bg-center"  
