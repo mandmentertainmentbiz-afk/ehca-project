@@ -229,7 +229,7 @@ projectSchema.pre(
         }
       }
 
-      next();
+  
 
     } catch (error) {
 
