@@ -15,6 +15,7 @@ import AddProject from "./pages/admin/AddProject";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminMembers from "./pages/admin/AdminMembers";
 import AdminDonation from "./pages/admin/AdminDonation";
+import Gallery from "./pages/Gallery";
 
 export default function App() {
   return (
@@ -31,8 +32,8 @@ export default function App() {
             <Route path="/donate" element={<Donate />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/members"  element={<AdminMembers />} />
-            <Route path="/admin/donations" element={<AdminDonation />}
-/>
+            <Route path="/admin/donations" element={<AdminDonation />}/>
+            <Route path="/gallery" element={<Gallery />} />
 
             {/* 🔒 PROTECTED ROUTES */}
             <Route
