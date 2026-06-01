@@ -420,7 +420,7 @@ const featuredPastEvents = pastEvents.slice(0, 3);
                 alt={p.title}
                 className="h-72 w-full object-cover"
                 onError={(e) => {
-                  e.target.src = "/images/no-image.jpg";
+                  e.target.src = "../images/no-image.jpg";
                 }}
               />
             ) : (

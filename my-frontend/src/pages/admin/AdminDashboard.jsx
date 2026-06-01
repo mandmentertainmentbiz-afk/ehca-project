@@ -102,7 +102,7 @@ const handleUpdate = async (e) => {
 };
 
   return (
-    <div className="p-10">
+    <div className="p-10"><br></br><br></br>
       <h1 className="text-3xl font-bold mb-6">
         Admin Dashboard
       </h1>
