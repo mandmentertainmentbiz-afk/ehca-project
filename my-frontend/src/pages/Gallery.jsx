@@ -7,33 +7,35 @@ export default function Gallery() {
   const [pastEvents, setPastEvents] = useState([]);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const res = await axios.get(
-          `${API_URL}/api/projects`
-        );
+  const fetchEvents = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/projects`
+      );
 
-        const allProjects = Array.isArray(res.data)
-          ? res.data
-          : res.data.projects || [];
+      const allProjects = Array.isArray(res.data)
+        ? res.data
+        : res.data.projects || [];
 
-        const past = allProjects.filter((p) => {
-          if (!p.date) return false;
+      // ONLY PAST EVENTS
+      const past = allProjects.filter(
+        (p) =>
+          p.category?.toLowerCase() === "past" ||
+          p.isPastEvent === true
+      );
 
-          return (
-            new Date(p.date) < new Date() ||
-            p.category?.toLowerCase() === "past"
-          );
-        });
+      setPastEvents(past);
 
-        setPastEvents(past);
-      } catch (err) {
-        console.error(err);
-      }
-    };
+    } catch (err) {
+      console.error(
+        "Failed to fetch gallery:",
+        err
+      );
+    }
+  };
 
-    fetchEvents();
-  }, []);
+  fetchEvents();
+}, []);
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
