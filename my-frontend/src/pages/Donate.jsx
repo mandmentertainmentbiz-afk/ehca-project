@@ -114,7 +114,7 @@ export default function Donate() {
         className="relative h-[60vh] flex items-center justify-center text-center bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('/images/smile.PNG')",
+            "url('/slide/smile.PNG')",
         }}
       >
         <div className="absolute inset-0 bg-blue-950/40" />

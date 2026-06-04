@@ -60,59 +60,62 @@ router.post(
       }
 
       /* ================= CREATE PROJECT ================= */
-      const project = new Project({
-        title: title.trim(),
+console.log("Uploaded file:", req.file);
 
-        desc: desc.trim(),
+const project = new Project({
+  title: title.trim(),
 
-        shortDesc:
-          shortDesc?.trim() || "",
+  desc: desc.trim(),
 
-        date,
+  shortDesc:
+    shortDesc?.trim() || "",
 
-        endDate:
-          endDate || null,
+  date,
 
-        category:
-          category || "project",
+  endDate:
+    endDate || null,
 
-        status:
-          status || "active",
+  category:
+    category || "project",
 
-        featured:
-          featured === true ||
-          featured === "true",
+  status:
+    status || "active",
 
-        donationGoal:
-          Number(donationGoal) || 0,
+  featured:
+    featured === true ||
+    featured === "true",
 
-        donationRaised:
-          Number(donationRaised) || 0,
+  donationGoal:
+    Number(donationGoal) || 0,
 
-        location:
-          location?.trim() || "",
+  donationRaised:
+    Number(donationRaised) || 0,
 
-        metaTitle:
-          metaTitle?.trim() || "",
+  location:
+    location?.trim() || "",
 
-        metaDesc:
-          metaDesc?.trim() || "",
+  metaTitle:
+    metaTitle?.trim() || "",
 
-        tags: formatTags(tags),
+  metaDesc:
+    metaDesc?.trim() || "",
 
-        image: req.file
-  ? req.file.path
-  : "",
-      });
+  tags: formatTags(tags),
 
-      await project.save();
+  // Cloudinary image URL
+  image: req.file
+    ? req.file.path
+    : "",
+});
 
-      res.status(201).json({
-        success: true,
-        message:
-          "Project created successfully",
-        project,
-      });
+await project.save();
+
+res.status(201).json({
+  success: true,
+  message:
+    "Project created successfully",
+  project,
+});
 
     } catch (err) {
 
@@ -265,10 +268,8 @@ router.put(
 
       /* ================= IMAGE ================= */
       if (req.file) {
-        image: req.file
-  ? req.file.path
-  : "",
-      }
+  updatedData.image = req.file.path;
+}
 
       /* ================= UPDATE ================= */
       const project =

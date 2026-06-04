@@ -13,10 +13,10 @@ const API_URL =
 /* ================= HERO ================= */
 const HeroSlider = () => {
   const images = [
-    "/images/banner8.png",
-    "/images/img1.jpg",
-    "/images/img2.jpg",
-    "/images/img3.jpg",
+    "/slide/banner8.png",
+    "/slide/img1.jpg",
+    "/slide/img2.jpg",
+    "/slide/img3.jpg",
   ];
 
   const [index, setIndex] = useState(0);
@@ -267,7 +267,7 @@ const featuredPastEvents = pastEvents.slice(0, 3);
       initial={{ opacity: 0, x: -40 }}  
       whileInView={{ opacity: 1, x: 0 }}  
       transition={{ duration: 0.8 }}  
-      src="../../images/ehca2.jpeg"  
+      src="../../slide/ehca2.jpeg"  
       alt="about"  
       className="rounded-3xl shadow-2xl w-full md:w-1/2 md:h-110"  
     />  
@@ -460,7 +460,7 @@ const featuredPastEvents = pastEvents.slice(0, 3);
     className="relative text-white text-center py-24 px-6 bg-cover bg-center"  
     style={{  
       backgroundImage:  
-        "url('/images/smile.PNG')",  
+        "url('/slide/smile.PNG')",  
     }}  
   >  
     <div className="absolute inset-0 bg-blue-950/40" />  

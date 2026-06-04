@@ -65,7 +65,7 @@ export default function Contact() {
       <section
         className="relative h-[100vh] flex items-center justify-center text-center bg-cover bg-center"
         style={{
-          backgroundImage: "url('/images/banner8.png')",
+          backgroundImage: "url('/slide/banner8.png')",
         }}
       >
         <div className="absolute inset-0 bg-blue-950/40" />

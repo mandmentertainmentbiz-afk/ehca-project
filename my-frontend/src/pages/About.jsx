@@ -9,7 +9,7 @@ export default function About() {
       <section
         className="relative h-screen flex items-center justify-center text-center bg-cover bg-center"
         style={{
-          backgroundImage: "url('/images/banner8.png')",
+          backgroundImage: "url('/slide/banner8.png')",
         }}
       >
         {/* OVERLAY */}
