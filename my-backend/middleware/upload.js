@@ -1,23 +1,25 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../config/cloudinary.js";
 
-const uploadPath = "public/uploads";
+const storage = new CloudinaryStorage({
+  cloudinary,
 
-// Create folder if it doesn't exist
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
+  params: {
+    folder: "ehca-projects",
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName =
-      Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueName + path.extname(file.originalname));
+    allowed_formats: [
+      "jpg",
+      "jpeg",
+      "png",
+      "webp",
+    ],
+
+    public_id: (req, file) =>
+      `${Date.now()}-${file.originalname}`,
   },
 });
 
-export const upload = multer({ storage });
+export const upload = multer({
+  storage,
+});

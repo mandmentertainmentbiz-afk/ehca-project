@@ -101,8 +101,8 @@ router.post(
         tags: formatTags(tags),
 
         image: req.file
-          ? `/uploads/${req.file.filename}`
-          : "",
+  ? req.file.path
+  : "",
       });
 
       await project.save();
@@ -265,8 +265,9 @@ router.put(
 
       /* ================= IMAGE ================= */
       if (req.file) {
-        updatedData.image =
-          `/uploads/${req.file.filename}`;
+        image: req.file
+  ? req.file.path
+  : "",
       }
 
       /* ================= UPDATE ================= */

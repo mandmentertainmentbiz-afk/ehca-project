@@ -82,12 +82,14 @@ app.use(
 );
 
 /* ================= STATIC FILES ================= */
+/* =================
 app.use(
   "/uploads",
   express.static(
     path.join(__dirname, "public/uploads")
   )
 );
+================= */
 
 /* ================= HEALTH ROUTE ================= */
 app.get("/", (req, res) => {
