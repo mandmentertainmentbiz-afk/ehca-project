@@ -196,15 +196,9 @@ const featuredPastEvents = pastEvents.slice(0, 3);
     )[0] || null;
 
   /* ================= IMAGE URL ================= */
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "";
-
-    if (imagePath.startsWith("http")) {
-      return imagePath;
-    }
-
-    return `${API_URL}${imagePath}`;
-  };
+  const getImageUrl = (image) => {
+  return image || "";
+};
 
   /* ================= LOADING ================= */
   if (loading) {
@@ -414,20 +408,20 @@ const featuredPastEvents = pastEvents.slice(0, 3);
             whileHover={{ scale: 1.03 }}
             className="relative overflow-hidden rounded-2xl shadow-lg group bg-white"
           >
-            {p.image ? (
-              <img
-                src={getImageUrl(p.image)}
-                alt={p.title}
-                className="h-72 w-full object-cover"
-                onError={(e) => {
-                  e.target.src = "../images/no-image.jpg";
-                }}
-              />
-            ) : (
-              <div className="h-72 bg-gray-200 flex items-center justify-center text-gray-500">
-                No Image Available
-              </div>
-            )}
+           {p.image ? (
+  <img
+    src={p.image}
+    alt={p.title}
+    className="h-72 w-full object-cover"
+    onError={(e) => {
+      e.target.src = "/images/no-image.jpg";
+    }}
+  />
+) : (
+  <div className="h-72 bg-gray-200 flex items-center justify-center text-gray-500">
+    No Image Available
+  </div>
+)}
 
             <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center items-center text-center text-white p-6">
               <h3 className="text-2xl font-bold mb-2">

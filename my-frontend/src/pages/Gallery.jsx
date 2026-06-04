@@ -47,15 +47,9 @@ export default function Gallery() {
     fetchEvents();
   }, []);
 
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return "";
-
-    if (imagePath.startsWith("http")) {
-      return imagePath;
-    }
-
-    return `${API_URL}${imagePath}`;
-  };
+  const getImageUrl = (image) => {
+  return image || "";
+};
 
   if (loading) {
     return (
@@ -87,20 +81,19 @@ export default function Gallery() {
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
             >
               {event.image ? (
-                <img
-                  src={getImageUrl(event.image)}
-                  alt={event.title}
-                  className="w-full h-64 object-cover"
-                  onError={(e) => {
-                    e.target.src =
-                      "/images/no-image.jpg";
-                  }}
-                />
-              ) : (
-                <div className="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">
-                  No Image Available
-                </div>
-              )}
+  <img
+    src={p.image}
+    alt={p.title}
+    className="h-72 w-full object-cover"
+    onError={(e) => {
+      e.target.src = "/images/no-image.jpg";
+    }}
+  />
+) : (
+  <div className="h-72 bg-gray-200 flex items-center justify-center text-gray-500">
+    No Image Available
+  </div>
+)}
 
               <div className="p-5">
                 <h3 className="font-bold text-xl mb-2">
