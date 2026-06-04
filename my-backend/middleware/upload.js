@@ -5,8 +5,10 @@ import cloudinary from "../config/cloudinary.js";
 const storage = new CloudinaryStorage({
   cloudinary,
 
-  params: {
+  params: async (req, file) => ({
     folder: "ehca-projects",
+
+    resource_type: "image",
 
     allowed_formats: [
       "jpg",
@@ -15,9 +17,10 @@ const storage = new CloudinaryStorage({
       "webp",
     ],
 
-    public_id: (req, file) =>
-      `${Date.now()}-${file.originalname}`,
-  },
+    public_id: `${Date.now()}-${file.originalname
+      .split(".")[0]
+      .replace(/\s+/g, "-")}`,
+  }),
 });
 
 export const upload = multer({
