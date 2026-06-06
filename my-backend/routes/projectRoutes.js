@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import Project from "../models/Project.js";
 import { upload } from "../middleware/upload.js";
 import { verifyToken } from "../middleware/auth.js";
@@ -32,7 +33,6 @@ router.post(
   upload.single("image"),
   async (req, res) => {
     try {
-
       const {
         title,
         desc,
@@ -50,7 +50,6 @@ router.post(
         tags,
       } = req.body;
 
-      /* ================= VALIDATION ================= */
       if (!title || !desc || !date) {
         return res.status(400).json({
           success: false,
@@ -59,70 +58,53 @@ router.post(
         });
       }
 
-      /* ================= CREATE PROJECT ================= */
-console.log("Uploaded file:", req.file);
+      const project = new Project({
+        title: title.trim(),
+        desc: desc.trim(),
+        shortDesc: shortDesc?.trim() || "",
+        date,
+        endDate: endDate || null,
+        category: category || "project",
+        status: status || "active",
 
-const project = new Project({
-  title: title.trim(),
+        featured:
+          featured === true ||
+          featured === "true",
 
-  desc: desc.trim(),
+        donationGoal:
+          donationGoal !== undefined
+            ? Number(donationGoal)
+            : 0,
 
-  shortDesc:
-    shortDesc?.trim() || "",
+        donationRaised:
+          donationRaised !== undefined
+            ? Number(donationRaised)
+            : 0,
 
-  date,
+        location: location?.trim() || "",
 
-  endDate:
-    endDate || null,
+        metaTitle: metaTitle?.trim() || "",
+        metaDesc: metaDesc?.trim() || "",
 
-  category:
-    category || "project",
+        tags: formatTags(tags),
 
-  status:
-    status || "active",
+        image: req.file
+          ? req.file.path
+          : "",
+      });
 
-  featured:
-    featured === true ||
-    featured === "true",
+      await project.save();
 
-  donationGoal:
-    Number(donationGoal) || 0,
-
-  donationRaised:
-    Number(donationRaised) || 0,
-
-  location:
-    location?.trim() || "",
-
-  metaTitle:
-    metaTitle?.trim() || "",
-
-  metaDesc:
-    metaDesc?.trim() || "",
-
-  tags: formatTags(tags),
-
-  // Cloudinary image URL
-  image: req.file
-    ? req.file.path
-    : "",
-});
-
-await project.save();
-
-res.status(201).json({
-  success: true,
-  message:
-    "Project created successfully",
-  project,
-});
-
+      res.status(201).json({
+        success: true,
+        message:
+          "Project created successfully",
+        project,
+      });
     } catch (err) {
-
       console.error(
         "❌ CREATE PROJECT ERROR:"
       );
-
       console.error(err);
 
       res.status(500).json({
@@ -138,20 +120,15 @@ res.status(201).json({
 /* ================= GET ALL PROJECTS ================= */
 router.get("/", async (req, res) => {
   try {
-
-    const projects =
-      await Project.find().sort({
-        createdAt: -1,
-      });
+    const projects = await Project.find().sort({
+      createdAt: -1,
+    });
 
     res.status(200).json(projects);
-
   } catch (err) {
-
     console.error(
       "❌ FETCH PROJECTS ERROR:"
     );
-
     console.error(err);
 
     res.status(500).json({
@@ -166,6 +143,16 @@ router.get("/", async (req, res) => {
 /* ================= GET SINGLE PROJECT ================= */
 router.get("/:id", async (req, res) => {
   try {
+    if (
+      !mongoose.Types.ObjectId.isValid(
+        req.params.id
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid project ID",
+      });
+    }
 
     const project =
       await Project.findById(
@@ -180,13 +167,10 @@ router.get("/:id", async (req, res) => {
     }
 
     res.status(200).json(project);
-
   } catch (err) {
-
     console.error(
       "❌ GET PROJECT ERROR:"
     );
-
     console.error(err);
 
     res.status(500).json({
@@ -205,6 +189,16 @@ router.put(
   upload.single("image"),
   async (req, res) => {
     try {
+      if (
+        !mongoose.Types.ObjectId.isValid(
+          req.params.id
+        )
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid project ID",
+        });
+      }
 
       const {
         title,
@@ -223,55 +217,71 @@ router.put(
         tags,
       } = req.body;
 
-      /* ================= UPDATE OBJECT ================= */
-      const updatedData = {
-        title:
-          title?.trim(),
+      const updatedData = {};
 
-        desc:
-          desc?.trim(),
+      if (title !== undefined)
+        updatedData.title = title.trim();
 
-        shortDesc:
-          shortDesc?.trim() || "",
+      if (desc !== undefined)
+        updatedData.desc = desc.trim();
 
-        date,
+      if (shortDesc !== undefined)
+        updatedData.shortDesc =
+          shortDesc.trim();
 
-        endDate:
-          endDate || null,
+      if (date !== undefined)
+        updatedData.date = date;
 
-        category,
+      if (endDate !== undefined)
+        updatedData.endDate = endDate;
 
-        status,
+      if (category !== undefined)
+        updatedData.category = category;
 
-        featured:
+      if (status !== undefined)
+        updatedData.status = status;
+
+      if (featured !== undefined) {
+        updatedData.featured =
           featured === true ||
-          featured === "true",
+          featured === "true";
+      }
 
-        donationGoal:
-          Number(donationGoal) || 0,
+      if (donationGoal !== undefined) {
+        updatedData.donationGoal =
+          Number(donationGoal);
+      }
 
-        donationRaised:
-          Number(donationRaised) || 0,
+      if (donationRaised !== undefined) {
+        updatedData.donationRaised =
+          Number(donationRaised);
+      }
 
-        location:
-          location?.trim() || "",
+      if (location !== undefined) {
+        updatedData.location =
+          location.trim();
+      }
 
-        metaTitle:
-          metaTitle?.trim() || "",
+      if (metaTitle !== undefined) {
+        updatedData.metaTitle =
+          metaTitle.trim();
+      }
 
-        metaDesc:
-          metaDesc?.trim() || "",
+      if (metaDesc !== undefined) {
+        updatedData.metaDesc =
+          metaDesc.trim();
+      }
 
-        tags:
-          formatTags(tags),
-      };
+      if (tags !== undefined) {
+        updatedData.tags =
+          formatTags(tags);
+      }
 
-      /* ================= IMAGE ================= */
       if (req.file) {
-  updatedData.image = req.file.path;
-}
+        updatedData.image =
+          req.file.path;
+      }
 
-      /* ================= UPDATE ================= */
       const project =
         await Project.findByIdAndUpdate(
           req.params.id,
@@ -295,13 +305,10 @@ router.put(
           "Project updated successfully",
         project,
       });
-
     } catch (err) {
-
       console.error(
         "❌ UPDATE PROJECT ERROR:"
       );
-
       console.error(err);
 
       res.status(500).json({
@@ -320,6 +327,16 @@ router.delete(
   verifyToken,
   async (req, res) => {
     try {
+      if (
+        !mongoose.Types.ObjectId.isValid(
+          req.params.id
+        )
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid project ID",
+        });
+      }
 
       const project =
         await Project.findByIdAndDelete(
@@ -338,13 +355,10 @@ router.delete(
         message:
           "Project deleted successfully",
       });
-
     } catch (err) {
-
       console.error(
         "❌ DELETE PROJECT ERROR:"
       );
-
       console.error(err);
 
       res.status(500).json({
