@@ -1,242 +1,218 @@
 import mongoose from "mongoose";
 
-/* ================= PROJECT SCHEMA ================= */
-const projectSchema =
-  new mongoose.Schema(
-    {
-      /* ================= BASIC INFO ================= */
-      title: {
-        type: String,
-        required: true,
-        trim: true,
-        maxlength: 200,
-      },
-
-      desc: {
-        type: String,
-        required: true,
-        trim: true,
-      },
-
-      shortDesc: {
-        type: String,
-        trim: true,
-        default: "",
-        maxlength: 300,
-      },
-
-      /* ================= DATES ================= */
-      date: {
-        type: Date,
-        required: true,
-      },
-
-      endDate: {
-        type: Date,
-        default: null,
-      },
-
-      /* ================= CATEGORY ================= */
-      category: {
-        type: String,
-
-        enum: [
-          "project",
-          "ongoing",
-          "upcoming",
-          "past",
-        ],
-
-        default: "project",
-      },
-
-      /* ================= STATUS ================= */
-      status: {
-        type: String,
-
-        enum: [
-          "draft",
-          "active",
-          "completed",
-        ],
-
-        default: "active",
-      },
-
-      /* ================= MAIN IMAGE ================= */
-      image: {
-        type: String,
-        default: "",
-      },
-
-      /* ================= IMAGE GALLERY ================= */
-      gallery: [
-        {
-          type: String,
-        },
-      ],
-
-      /* ================= DONATION ================= */
-      donationGoal: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
-
-      donationRaised: {
-        type: Number,
-        default: 0,
-        min: 0,
-      },
-
-      /* ================= FEATURED ================= */
-      featured: {
-        type: Boolean,
-        default: false,
-      },
-
-      /* ================= LOCATION ================= */
-      location: {
-        type: String,
-        trim: true,
-        default: "",
-      },
-
-      /* ================= SEO ================= */
-      slug: {
-  type: String,
-  lowercase: true,
-  trim: true,
-},
-
-      metaTitle: {
-        type: String,
-        trim: true,
-        default: "",
-      },
-
-      metaDesc: {
-        type: String,
-        trim: true,
-        default: "",
-      },
-
-      /* ================= TAGS ================= */
-      tags: [
-        {
-          type: String,
-          trim: true,
-          lowercase: true,
-        },
-      ],
-
-      /* ================= ANALYTICS ================= */
-      views: {
-        type: Number,
-        default: 0,
-      },
-
-      /* ================= AUTO DETECT ================= */
-      isPastEvent: {
-        type: Boolean,
-        default: false,
-      },
-    },
-
-    {
-      timestamps: true,
-    }
-  );
-
 /* ================= GENERATE SLUG ================= */
 const generateSlug = (title) => {
   return title
     .toLowerCase()
     .trim()
-    .replace(
-      /[^a-zA-Z0-9\s-]/g,
-      ""
-    )
+    .replace(/[^a-zA-Z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 };
 
-/* ================= PRE SAVE ================= */
-projectSchema.pre(
-  "save",
-  function (next) {
-    try {
+/* ================= PROJECT SCHEMA ================= */
+const projectSchema = new mongoose.Schema(
+  {
+    /* ================= BASIC INFO ================= */
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 200,
+    },
 
-      /* ================= AUTO SLUG ================= */
-      if (
-        this.title &&
-        (!this.slug ||
-          this.isModified("title"))
-      ) {
-        this.slug = `${generateSlug(
-          this.title
-        )}-${Date.now()}`;
-      }
+    desc: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-      /* ================= AUTO PAST EVENT ================= */
-      if (this.date) {
+    shortDesc: {
+      type: String,
+      trim: true,
+      default: "",
+      maxlength: 300,
+    },
 
-        const now = new Date();
+    /* ================= DATES ================= */
+    date: {
+      type: Date,
+      required: true,
+    },
 
-        const eventDate =
-          new Date(this.date);
+    endDate: {
+      type: Date,
+      default: null,
+    },
 
-        /* End of the event day */
-        eventDate.setHours(
-          23,
-          59,
-          59,
-          999
-        );
+    /* ================= CATEGORY ================= */
+    category: {
+      type: String,
+      enum: [
+        "project",
+        "ongoing",
+        "upcoming",
+        "past",
+      ],
+      default: "project",
+    },
 
-        if (now > eventDate) {
+    /* ================= STATUS ================= */
+    status: {
+      type: String,
+      enum: [
+        "draft",
+        "active",
+        "completed",
+      ],
+      default: "active",
+    },
 
-          this.isPastEvent = true;
+    /* ================= MAIN IMAGE ================= */
+    image: {
+      type: String,
+      default: "",
+    },
 
-          /* Auto move to past */
-          if (
-            this.category !==
-            "project"
-          ) {
-            this.category = "past";
-          }
+    /* ================= IMAGE GALLERY ================= */
+    gallery: [
+      {
+        type: String,
+      },
+    ],
 
-          /* Auto complete */
-          if (
-            this.status === "active"
-          ) {
-            this.status =
-              "completed";
-          }
+    /* ================= DONATION ================= */
+    donationGoal: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
 
-        } else {
+    donationRaised: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
 
-          this.isPastEvent = false;
+    /* ================= FEATURED ================= */
+    featured: {
+      type: Boolean,
+      default: false,
+    },
 
-          /* Auto upcoming */
-          if (
-            this.category ===
-            "past"
-          ) {
-            this.category =
-              "upcoming";
-          }
-        }
-      }
+    /* ================= LOCATION ================= */
+    location: {
+      type: String,
+      trim: true,
+      default: "",
+    },
 
-  
+    /* ================= SEO ================= */
+    slug: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      unique: true,
+    },
 
-    } catch (error) {
+    metaTitle: {
+      type: String,
+      trim: true,
+      default: "",
+    },
 
-      next(error);
-    }
+    metaDesc: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    /* ================= TAGS ================= */
+    tags: [
+      {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+    ],
+
+    /* ================= ANALYTICS ================= */
+    views: {
+      type: Number,
+      default: 0,
+    },
+
+    /* ================= AUTO DETECT ================= */
+    isPastEvent: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  {
+    timestamps: true,
   }
 );
+
+/* ================= PRE SAVE ================= */
+projectSchema.pre("save", function (next) {
+  try {
+    /* ================= AUTO SLUG ================= */
+    if (
+      this.title &&
+      (!this.slug || this.isModified("title"))
+    ) {
+      this.slug = `${generateSlug(
+        this.title
+      )}-${Date.now()}`;
+    }
+
+    /* ================= AUTO PAST EVENT ================= */
+    if (this.date) {
+      const now = new Date();
+
+      const eventDate = new Date(
+        this.date
+      );
+
+      eventDate.setHours(
+        23,
+        59,
+        59,
+        999
+      );
+
+      if (now > eventDate) {
+        this.isPastEvent = true;
+
+        if (
+          this.category !== "project"
+        ) {
+          this.category = "past";
+        }
+
+        if (
+          this.status === "active"
+        ) {
+          this.status =
+            "completed";
+        }
+      } else {
+        this.isPastEvent = false;
+
+        if (
+          this.category === "past"
+        ) {
+          this.category =
+            "upcoming";
+        }
+      }
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 /* ================= INDEXES ================= */
 projectSchema.index({
@@ -251,7 +227,9 @@ projectSchema.index({
   featured: 1,
 });
 
-projectSchema.index({ slug: 1 });
+projectSchema.index({
+  slug: 1,
+});
 
 projectSchema.index({
   createdAt: -1,

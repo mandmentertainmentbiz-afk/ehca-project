@@ -2,8 +2,6 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
 
 /* ================= ROUTES ================= */
 import donationRoutes from "./routes/donationRoutes.js";
@@ -17,11 +15,6 @@ dotenv.config();
 /* ================= APP ================= */
 const app = express();
 
-/* ================= __dirname FIX ================= */
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
-
 /* ================= TRUST PROXY ================= */
 app.set("trust proxy", 1);
 
@@ -34,20 +27,22 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: function (origin, callback) {
+    origin: (origin, callback) => {
+      console.log("🌍 Request Origin:", origin);
 
-      // allow requests with no origin
       if (!origin) {
         return callback(null, true);
       }
 
       if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(
-          new Error("CORS not allowed")
-        );
+        return callback(null, true);
       }
+
+      console.log("❌ Blocked Origin:", origin);
+
+      return callback(
+        new Error(`CORS not allowed: ${origin}`)
+      );
     },
 
     credentials: true,
@@ -81,47 +76,21 @@ app.use(
   })
 );
 
-/* ================= STATIC FILES ================= */
-/* =================
-app.use(
-  "/uploads",
-  express.static(
-    path.join(__dirname, "public/uploads")
-  )
-);
-================= */
-
 /* ================= HEALTH ROUTE ================= */
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message:
-      "EHCA Backend API running successfully 🚀",
+    message: "EHCA Backend API running successfully 🚀",
   });
 });
 
 /* ================= API ROUTES ================= */
-app.use(
-  "/api/donations",
-  donationRoutes
-);
+app.use("/api/donations", donationRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/members", memberRoutes);
 
-app.use(
-  "/api/projects",
-  projectRoutes
-);
-
-app.use(
-  "/api/auth",
-  authRoutes
-);
-
-app.use(
-  "/api/members",
-  memberRoutes
-);
-
-/* ================= 404 HANDLER ================= */
+/* ================= 404 ================= */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -129,28 +98,27 @@ app.use((req, res) => {
   });
 });
 
-/* ================= GLOBAL ERROR HANDLER ================= */
+/* ================= GLOBAL ERROR ================= */
 app.use((err, req, res, next) => {
   console.error("🔥 SERVER ERROR");
-
   console.error(err);
 
   res.status(500).json({
     success: false,
-    message:
-      err.message ||
-      "Internal Server Error",
+    message: err.message || "Internal Server Error",
   });
 });
 
 /* ================= ENV VALIDATION ================= */
 const requiredEnvVars = [
   "MONGO_URI",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
 ];
 
 requiredEnvVars.forEach((envVar) => {
   if (!process.env[envVar]) {
-
     console.error(
       `❌ Missing environment variable: ${envVar}`
     );
@@ -159,19 +127,13 @@ requiredEnvVars.forEach((envVar) => {
   }
 });
 
-/* ================= PORT ================= */
-const PORT =
-  process.env.PORT || 5000;
-
 /* ================= START SERVER ================= */
+const PORT = process.env.PORT || 5000;
+
 const startServer = async () => {
   try {
-
     await mongoose.connect(
-      process.env.MONGO_URI,
-      {
-        serverSelectionTimeoutMS: 5000,
-      }
+      process.env.MONGO_URI
     );
 
     console.log(
@@ -179,15 +141,12 @@ const startServer = async () => {
     );
 
     app.listen(PORT, () => {
-
       console.log(
         `🚀 Server running on port ${PORT}`
       );
-
     });
 
   } catch (err) {
-
     console.error(
       "❌ MongoDB Connection Failed"
     );
