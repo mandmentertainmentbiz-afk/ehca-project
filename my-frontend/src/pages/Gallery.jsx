@@ -20,12 +20,12 @@ export default function Gallery() {
           ? res.data
           : res.data.projects || [];
 
-        // ONLY PAST EVENTS
+        // Show only past events
         const past = allProjects
           .filter(
-            (p) =>
-              p.category?.toLowerCase() === "past" ||
-              p.isPastEvent === true
+            (project) =>
+              project.category?.toLowerCase() === "past" ||
+              project.isPastEvent === true
           )
           .sort(
             (a, b) =>
@@ -46,10 +46,6 @@ export default function Gallery() {
 
     fetchEvents();
   }, []);
-
-  const getImageUrl = (image) => {
-  return image || "";
-};
 
   if (loading) {
     return (
@@ -81,19 +77,21 @@ export default function Gallery() {
               className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
             >
               {event.image ? (
-  <img
-    src={p.image}
-    alt={p.title}
-    className="h-72 w-full object-cover"
-    onError={(e) => {
-      e.target.src = "/images/no-image.jpg";
-    }}
-  />
-) : (
-  <div className="h-72 bg-gray-200 flex items-center justify-center text-gray-500">
-    No Image Available
-  </div>
-)}
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="h-72 w-full object-cover"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://via.placeholder.com/600x400?text=No+Image";
+                  }}
+                />
+              ) : (
+                <div className="h-72 bg-gray-200 flex items-center justify-center text-gray-500">
+                  No Image Available
+                </div>
+              )}
 
               <div className="p-5">
                 <h3 className="font-bold text-xl mb-2">
@@ -109,7 +107,9 @@ export default function Gallery() {
                 </p>
 
                 <p className="text-gray-600 line-clamp-4">
-                  {event.shortDesc || event.desc}
+                  {event.shortDesc ||
+                    event.desc ||
+                    "No description available"}
                 </p>
               </div>
             </div>
