@@ -8,13 +8,13 @@ export default function AddProject() {
   const navigate = useNavigate();
   const fileRef = useRef(null);
 
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     title: "",
     desc: "",
     date: "",
     image: null,
-
-    // EXTRA FIELDS
     category: "project",
     status: "active",
     featured: false,
@@ -23,11 +23,10 @@ export default function AddProject() {
     tags: "",
   });
 
-  const [loading, setLoading] = useState(false);
-
   /* ================= HANDLE INPUT ================= */
   const handleChange = (e) => {
-    const { name, value, files, type, checked } = e.target;
+    const { name, value, files, type, checked } =
+      e.target;
 
     setForm((prev) => ({
       ...prev,
@@ -44,14 +43,19 @@ export default function AddProject() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // VALIDATION
     if (!token) {
-      alert("❌ You are not logged in");
+      alert("You must be logged in.");
       return;
     }
 
-    if (!form.title || !form.desc || !form.date) {
-      alert("❌ Please fill all required fields");
+    if (
+      !form.title.trim() ||
+      !form.desc.trim() ||
+      !form.date
+    ) {
+      alert(
+        "Title, Description and Date are required."
+      );
       return;
     }
 
@@ -60,51 +64,80 @@ export default function AddProject() {
 
       const formData = new FormData();
 
-      // REQUIRED
-      formData.append("title", form.title.trim());
-      formData.append("desc", form.desc.trim());
+      formData.append(
+        "title",
+        form.title.trim()
+      );
+
+      formData.append(
+        "desc",
+        form.desc.trim()
+      );
+
       formData.append("date", form.date);
 
-      // OPTIONAL
-      formData.append("category", form.category);
-      formData.append("status", form.status);
-      formData.append("featured", form.featured);
+      formData.append(
+        "category",
+        form.category
+      );
+
+      formData.append(
+        "status",
+        form.status
+      );
+
+      formData.append(
+        "featured",
+        form.featured
+      );
+
       formData.append(
         "donationGoal",
         Number(form.donationGoal) || 0
       );
-      formData.append("location", form.location.trim());
 
-      // TAGS
-      formData.append("tags", form.tags);
+      formData.append(
+        "location",
+        form.location.trim()
+      );
 
-      // IMAGE
+      formData.append(
+        "tags",
+        form.tags.trim()
+      );
+
+      /* CLOUDINARY IMAGE */
       if (form.image) {
-        formData.append("image", form.image);
+        formData.append(
+          "image",
+          form.image
+        );
       }
 
-      const res = await axios.post(
+      const response = await axios.post(
         "https://ehca-project-1.onrender.com/api/projects",
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
           },
         }
       );
 
-      console.log("✅ SUCCESS:", res.data);
+      console.log(
+        "Project Created:",
+        response.data
+      );
 
-      alert("✅ Project added successfully");
+      alert(
+        "Project added successfully."
+      );
 
-      // RESET FORM
       setForm({
         title: "",
         desc: "",
         date: "",
         image: null,
-
         category: "project",
         status: "active",
         featured: false,
@@ -113,28 +146,19 @@ export default function AddProject() {
         tags: "",
       });
 
-      // RESET FILE INPUT
       if (fileRef.current) {
         fileRef.current.value = "";
       }
 
       navigate("/admin");
+    } catch (error) {
+      console.error(error);
 
-    } catch (err) {
-      console.error("❌ FULL ERROR:", err);
+      const message =
+        error?.response?.data?.message ||
+        "Failed to create project";
 
-      if (err.response) {
-        console.log("❌ BACKEND ERROR:", err.response.data);
-
-        alert(
-          err.response.data?.message ||
-          err.response.data?.error ||
-          "❌ Server Error"
-        );
-      } else {
-        alert("❌ Network error or backend not running");
-      }
-
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -150,94 +174,99 @@ export default function AddProject() {
           Add Project
         </h2>
 
-        {/* TITLE */}
         <input
           type="text"
           name="title"
-          value={form.title}
           placeholder="Project Title"
+          value={form.title}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
           required
         />
 
-        {/* DESCRIPTION */}
         <textarea
           name="desc"
+          placeholder="Project Description"
           value={form.desc}
-          placeholder="Description"
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          rows={4}
+          className="w-full mb-4 p-3 border rounded"
+          rows="5"
           required
         />
 
-        {/* DATE */}
         <input
           type="date"
           name="date"
           value={form.date}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
           required
         />
 
-        {/* CATEGORY */}
         <select
           name="category"
           value={form.category}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
         >
-          <option value="project">Our Project</option>
-          <option value="ongoing">Ongoing</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="past">Past Event</option>
+          <option value="project">
+            Project
+          </option>
+          <option value="ongoing">
+            Ongoing
+          </option>
+          <option value="upcoming">
+            Upcoming
+          </option>
+          <option value="past">
+            Past
+          </option>
         </select>
 
-        {/* STATUS */}
         <select
           name="status"
           value={form.status}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
         >
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
-          <option value="draft">Draft</option>
+          <option value="active">
+            Active
+          </option>
+          <option value="completed">
+            Completed
+          </option>
+          <option value="draft">
+            Draft
+          </option>
         </select>
 
-        {/* LOCATION */}
         <input
           type="text"
           name="location"
+          placeholder="Location"
           value={form.location}
-          placeholder="Project Location"
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
         />
 
-        {/* DONATION GOAL */}
         <input
           type="number"
           name="donationGoal"
-          value={form.donationGoal}
           placeholder="Donation Goal"
+          value={form.donationGoal}
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
         />
 
-        {/* TAGS */}
         <input
           type="text"
           name="tags"
+          placeholder="education, charity, health"
           value={form.tags}
-          placeholder="Tags (comma separated)"
           onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border rounded"
         />
 
-        {/* FEATURED */}
         <label className="flex items-center gap-2 mb-4">
           <input
             type="checkbox"
@@ -248,23 +277,23 @@ export default function AddProject() {
           Featured Project
         </label>
 
-        {/* IMAGE */}
         <input
           type="file"
           name="image"
-          ref={fileRef}
           accept="image/*"
+          ref={fileRef}
           onChange={handleChange}
-          className="w-full mb-4"
+          className="w-full mb-6"
         />
 
-        {/* BUTTON */}
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-900 text-white w-full py-2 rounded hover:bg-blue-800 transition disabled:opacity-50"
+          className="w-full bg-blue-900 text-white py-3 rounded hover:bg-blue-800 disabled:opacity-50"
         >
-          {loading ? "Adding..." : "Add Project"}
+          {loading
+            ? "Uploading to Cloudinary..."
+            : "Add Project"}
         </button>
       </form>
     </div>

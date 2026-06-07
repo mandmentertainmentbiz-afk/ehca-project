@@ -19,11 +19,50 @@ const app = express();
 app.set("trust proxy", 1);
 
 /* ================= CORS ================= */
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://ehca-project.vercel.app",
-  "https://mandmentertainmentbiz-6047s-projects.vercel.app",
-];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      console.log("🌍 Request Origin:", origin);
+
+      // Allow requests without origin
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Allow localhost during development
+      if (origin === "http://localhost:5173") {
+        return callback(null, true);
+      }
+
+      // Allow all Vercel deployments
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      console.log("❌ Blocked Origin:", origin);
+
+      return callback(
+        new Error(`CORS not allowed: ${origin}`)
+      );
+    },
+
+    credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
+  })
+);
 
 app.use(
   cors({
