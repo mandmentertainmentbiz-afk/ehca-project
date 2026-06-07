@@ -24,12 +24,12 @@ app.use(
     origin: (origin, callback) => {
       console.log("🌍 Request Origin:", origin);
 
-      // Allow requests without origin
+      // Allow requests with no origin
       if (!origin) {
         return callback(null, true);
       }
 
-      // Allow localhost during development
+      // Allow localhost
       if (origin === "http://localhost:5173") {
         return callback(null, true);
       }
@@ -55,43 +55,6 @@ app.use(
       "DELETE",
       "PATCH",
       "OPTIONS",
-    ],
-
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-    ],
-  })
-);
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      console.log("🌍 Request Origin:", origin);
-
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      console.log("❌ Blocked Origin:", origin);
-
-      return callback(
-        new Error(`CORS not allowed: ${origin}`)
-      );
-    },
-
-    credentials: true,
-
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "PATCH",
     ],
 
     allowedHeaders: [
@@ -129,7 +92,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/members", memberRoutes);
 
-/* ================= 404 ================= */
+/* ================= 404 HANDLER ================= */
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -137,7 +100,7 @@ app.use((req, res) => {
   });
 });
 
-/* ================= GLOBAL ERROR ================= */
+/* ================= GLOBAL ERROR HANDLER ================= */
 app.use((err, req, res, next) => {
   console.error("🔥 SERVER ERROR");
   console.error(err);
@@ -161,19 +124,17 @@ requiredEnvVars.forEach((envVar) => {
     console.error(
       `❌ Missing environment variable: ${envVar}`
     );
-
     process.exit(1);
   }
 });
 
-/* ================= START SERVER ================= */
+/* ================= PORT ================= */
 const PORT = process.env.PORT || 5000;
 
+/* ================= START SERVER ================= */
 const startServer = async () => {
   try {
-    await mongoose.connect(
-      process.env.MONGO_URI
-    );
+    await mongoose.connect(process.env.MONGO_URI);
 
     console.log(
       "✅ MongoDB connected successfully"
