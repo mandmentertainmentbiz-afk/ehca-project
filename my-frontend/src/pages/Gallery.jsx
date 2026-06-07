@@ -20,16 +20,32 @@ export default function Gallery() {
           ? res.data
           : res.data.projects || [];
 
-        // Show only past events
+        const now = new Date();
+
+        /* ================= PAST EVENTS ================= */
         const past = allProjects
-          .filter(
-            (project) =>
-              project.category?.toLowerCase() === "past" ||
-              project.isPastEvent === true
-          )
+          .filter((project) => {
+            const projectDate = new Date(
+              project.date
+            );
+
+            projectDate.setHours(
+              23,
+              59,
+              59,
+              999
+            );
+
+            return (
+              now > projectDate &&
+              project.category?.toLowerCase() ===
+                "past"
+            );
+          })
           .sort(
             (a, b) =>
-              new Date(b.date) - new Date(a.date)
+              new Date(b.date) -
+              new Date(a.date)
           );
 
         setPastEvents(past);
@@ -62,7 +78,8 @@ export default function Gallery() {
       </h1>
 
       <p className="text-center text-gray-500 mb-12">
-        Our past events and community outreach programs.
+        Our past events and community outreach
+        programs.
       </p>
 
       {pastEvents.length === 0 ? (
@@ -74,7 +91,7 @@ export default function Gallery() {
           {pastEvents.map((event) => (
             <div
               key={event._id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
             >
               {event.image ? (
                 <img
@@ -84,7 +101,7 @@ export default function Gallery() {
                   loading="lazy"
                   onError={(e) => {
                     e.target.src =
-                      "https://via.placeholder.com/600x400?text=No+Image";
+                      "/images/no-image.jpg";
                   }}
                 />
               ) : (
