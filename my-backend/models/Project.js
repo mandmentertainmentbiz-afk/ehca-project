@@ -5,7 +5,7 @@ const generateSlug = (title) => {
   return title
     .toLowerCase()
     .trim()
-    .replace(/[^a-zA-Z0-9\s-]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 };
@@ -74,14 +74,14 @@ const projectSchema = new mongoose.Schema(
       default: "",
     },
 
-    /* ================= IMAGE GALLERY ================= */
+    /* ================= GALLERY ================= */
     gallery: [
       {
         type: String,
       },
     ],
 
-    /* ================= DONATION ================= */
+    /* ================= DONATIONS ================= */
     donationGoal: {
       type: Number,
       default: 0,
@@ -142,7 +142,7 @@ const projectSchema = new mongoose.Schema(
       default: 0,
     },
 
-    /* ================= AUTO DETECT ================= */
+    /* ================= AUTO PAST EVENT ================= */
     isPastEvent: {
       type: Boolean,
       default: false,
@@ -166,13 +166,11 @@ projectSchema.pre("save", function (next) {
       )}-${Date.now()}`;
     }
 
-    /* ================= AUTO PAST EVENT ================= */
+    /* ================= AUTO DETECT PAST EVENT ================= */
     if (this.date) {
       const now = new Date();
 
-      const eventDate = new Date(
-        this.date
-      );
+      const eventDate = new Date(this.date);
 
       eventDate.setHours(
         23,
@@ -184,30 +182,21 @@ projectSchema.pre("save", function (next) {
       if (now > eventDate) {
         this.isPastEvent = true;
 
-        if (
-          this.category !== "project"
-        ) {
-          this.category = "past";
-        }
+        this.category = "past";
 
-        if (
-          this.status === "active"
-        ) {
-          this.status =
-            "completed";
+        if (this.status === "active") {
+          this.status = "completed";
         }
       } else {
         this.isPastEvent = false;
 
-        if (
-          this.category === "past"
-        ) {
-          this.category =
-            "upcoming";
+        if (this.category === "past") {
+          this.category = "upcoming";
         }
       }
     }
-  
+
+    next();
   } catch (error) {
     next(error);
   }
@@ -224,10 +213,6 @@ projectSchema.index({
 
 projectSchema.index({
   featured: 1,
-});
-
-projectSchema.index({
-  slug: 1,
 });
 
 projectSchema.index({
