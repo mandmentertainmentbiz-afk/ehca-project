@@ -16,11 +16,8 @@ router.post("/", async (req, res) => {
       message,
     } = req.body;
 
-    if (
-      !fullName ||
-      !email ||
-      !amount
-    ) {
+    /* ================= VALIDATION ================= */
+    if (!fullName || !email || !amount) {
       return res.status(400).json({
         success: false,
         message:
@@ -28,16 +25,29 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const donation = new Donation({
-      fullName,
-      email,
-      phone,
-      amount,
-      paymentMethod,
-      message,
-    });
+    const donationAmount = Number(amount);
 
-    await donation.save();
+    if (
+      isNaN(donationAmount) ||
+      donationAmount <= 0
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please provide a valid donation amount",
+      });
+    }
+
+    /* ================= CREATE ================= */
+    const donation = await Donation.create({
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone || "",
+      amount: donationAmount,
+      paymentMethod:
+        paymentMethod || "bank",
+      message: message || "",
+    });
 
     res.status(201).json({
       success: true,
@@ -48,46 +58,83 @@ router.post("/", async (req, res) => {
 
   } catch (err) {
     console.error(
-      "DONATION ERROR:",
+      "❌ CREATE DONATION ERROR:",
       err
     );
 
     res.status(500).json({
       success: false,
+      message:
+        "Failed to submit donation",
       error: err.message,
     });
   }
 });
 
-/* ================= GET DONATIONS ================= */
-router.get(
-  "/",
-  verifyToken,
-  async (req, res) => {
-    try {
-      const donations =
-        await Donation.find().sort({
-          createdAt: -1,
-        });
+/* ================= GET ALL DONATIONS ================= */
+router.get("/", verifyToken, async (req, res) => {
+  try {
+    const donations = await Donation.find()
+      .sort({ createdAt: -1 });
 
-      res.status(200).json({
-        success: true,
-        count: donations.length,
-        donations,
-      });
+    res.status(200).json({
+      success: true,
+      count: donations.length,
+      donations,
+    });
 
-    } catch (err) {
-      console.error(err);
+  } catch (err) {
+    console.error(
+      "❌ GET DONATIONS ERROR:",
+      err
+    );
 
-      res.status(500).json({
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch donations",
+      error: err.message,
+    });
+  }
+});
+
+/* ================= GET SINGLE DONATION ================= */
+router.get("/:id", verifyToken, async (req, res) => {
+  try {
+    const donation =
+      await Donation.findById(
+        req.params.id
+      );
+
+    if (!donation) {
+      return res.status(404).json({
         success: false,
-        error: err.message,
+        message:
+          "Donation not found",
       });
     }
-  }
-);
 
-/* ================= MARK DONATION COMPLETED ================= */
+    res.status(200).json({
+      success: true,
+      donation,
+    });
+
+  } catch (err) {
+    console.error(
+      "❌ GET DONATION ERROR:",
+      err
+    );
+
+    res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch donation",
+      error: err.message,
+    });
+  }
+});
+
+/* ================= MARK COMPLETED ================= */
 router.put(
   "/:id/complete",
   verifyToken,
@@ -120,12 +167,14 @@ router.put(
 
     } catch (err) {
       console.error(
-        "COMPLETE DONATION ERROR:",
+        "❌ COMPLETE DONATION ERROR:",
         err
       );
 
       res.status(500).json({
         success: false,
+        message:
+          "Failed to update donation",
         error: err.message,
       });
     }
@@ -159,12 +208,14 @@ router.delete(
 
     } catch (err) {
       console.error(
-        "DELETE DONATION ERROR:",
+        "❌ DELETE DONATION ERROR:",
         err
       );
 
       res.status(500).json({
         success: false,
+        message:
+          "Failed to delete donation",
         error: err.message,
       });
     }
