@@ -114,7 +114,7 @@ export default function Donate() {
         className="relative h-[60vh] flex items-center justify-center text-center bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('/slide/smile.PNG')",
+            "url('/images/smile.PNG')",
         }}
       >
         <div className="absolute inset-0 bg-blue-950/40" />
@@ -133,9 +133,9 @@ export default function Donate() {
           }}
           className="relative z-10 px-6"
         >
-          <p className="text-5xl md:text-7xl font-extrabold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6">
             Donate
-          </p>
+          </h1>
 
           <p className="text-xl text-gray-200 max-w-3xl mx-auto">
             Your generosity helps us provide
