@@ -82,31 +82,7 @@ router.post("/test", (req, res) => {
 });
 
 
-router.get("/", verifyToken, async (req, res) => {
-  try {
-    const donations = await Donation.find()
-      .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      success: true,
-      count: donations.length,
-      donations,
-    });
-
-  } catch (err) {
-    console.error(
-      "❌ GET DONATIONS ERROR:",
-      err
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Failed to fetch donations",
-      error: err.message,
-    });
-  }
-});
 
 /* ================= GET SINGLE DONATION ================= */
 router.get("/:id", verifyToken, async (req, res) => {
