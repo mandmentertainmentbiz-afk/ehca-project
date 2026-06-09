@@ -6,9 +6,6 @@ export default function Donate() {
   const [customAmount, setCustomAmount] =
     useState("");
 
-  const [loading, setLoading] =
-    useState(false);
-
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -35,10 +32,8 @@ export default function Donate() {
 
   /* ================= CUSTOM AMOUNT ================= */
   const handleCustomAmount = (e) => {
-    const value = e.target.value;
-
-    setCustomAmount(value);
-    setAmount(value);
+    setCustomAmount(e.target.value);
+    setAmount(e.target.value);
   };
 
   /* ================= SUBMIT ================= */
@@ -50,60 +45,26 @@ export default function Donate() {
       return;
     }
 
-    try {
-      setLoading(true);
+    console.log({
+      ...form,
+      amount,
+    });
 
-      const response = await fetch(
-        "https://ehca-backend-1.onrender.com/api/donations",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            ...form,
-            amount,
-          }),
-        }
-      );
+    alert(
+      "Donation request submitted successfully"
+    );
 
-      const data = await response.json();
+    // RESET
+    setAmount("");
+    setCustomAmount("");
 
-      if (!response.ok) {
-        throw new Error(
-          data.message ||
-            "Donation request failed"
-        );
-      }
-
-      alert(
-        "Donation request submitted successfully"
-      );
-
-      /* ================= RESET ================= */
-      setAmount("");
-      setCustomAmount("");
-
-      setForm({
-        fullName: "",
-        email: "",
-        phone: "",
-        message: "",
-        paymentMethod: "bank",
-      });
-
-    } catch (err) {
-      console.error(err);
-
-      alert(
-        err.message ||
-          "Something went wrong"
-      );
-
-    } finally {
-      setLoading(false);
-    }
+    setForm({
+      fullName: "",
+      email: "",
+      phone: "",
+      message: "",
+      paymentMethod: "bank",
+    });
   };
 
   return (
@@ -114,33 +75,25 @@ export default function Donate() {
         className="relative h-[60vh] flex items-center justify-center text-center bg-cover bg-center"
         style={{
           backgroundImage:
-            "url('/slide/smile.PNG')",
+            "url('/images/smile.PNG')",
         }}
       >
-        <div className="absolute inset-0 bg-blue-950/40" />
+        <div className="absolute inset-0 bg-blue-950/80" />
 
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 40,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 1,
-          }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
           className="relative z-10 px-6"
         >
-          <p className="text-5xl md:text-7xl font-extrabold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6">
             Donate
-          </p>
+          </h1>
 
           <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-            Your generosity helps us provide
-            care, education and hope to
-            vulnerable communities.
+            Your generosity helps us provide care,
+            education and hope to vulnerable
+            communities.
           </p>
         </motion.div>
       </section>
@@ -151,17 +104,9 @@ export default function Donate() {
 
           {/* ================= LEFT ================= */}
           <motion.div
-            initial={{
-              opacity: 0,
-              x: -40,
-            }}
-            whileInView={{
-              opacity: 1,
-              x: 0,
-            }}
-            transition={{
-              duration: 0.8,
-            }}
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
           >
             <h2 className="text-4xl font-bold mb-6">
               Make A Difference
@@ -174,7 +119,7 @@ export default function Donate() {
               empowerment initiatives.
             </p>
 
-            {/* ================= IMPACT ================= */}
+            {/* IMPACT */}
             <div className="space-y-6">
 
               <div className="bg-gray-50 p-6 rounded-2xl shadow">
@@ -183,8 +128,7 @@ export default function Donate() {
                 </h3>
 
                 <p className="text-gray-600">
-                  Provides school materials for
-                  a child
+                  Provides school materials for a child
                 </p>
               </div>
 
@@ -205,8 +149,8 @@ export default function Donate() {
                 </h3>
 
                 <p className="text-gray-600">
-                  Helps sponsor community
-                  development projects
+                  Helps sponsor community development
+                  projects
                 </p>
               </div>
 
@@ -215,17 +159,9 @@ export default function Donate() {
 
           {/* ================= FORM ================= */}
           <motion.div
-            initial={{
-              opacity: 0,
-              x: 40,
-            }}
-            whileInView={{
-              opacity: 1,
-              x: 0,
-            }}
-            transition={{
-              duration: 0.8,
-            }}
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
             className="bg-white shadow-2xl rounded-3xl p-8"
           >
             <h2 className="text-3xl font-bold mb-8">
@@ -234,7 +170,7 @@ export default function Donate() {
 
             <form onSubmit={handleSubmit}>
 
-              {/* ================= AMOUNT ================= */}
+              {/* AMOUNT */}
               <div className="mb-8">
                 <label className="block mb-4 font-bold text-lg">
                   Select Amount
@@ -242,38 +178,34 @@ export default function Donate() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
 
-                  {[25, 50, 100, 250].map(
-                    (value) => (
-                      <button
-                        key={value}
-                        type="button"
-                        onClick={() =>
-                          selectAmount(value)
-                        }
-                        className={`p-4 rounded-xl border font-bold transition ${
-                          Number(amount) === value
-                            ? "bg-pink-500 text-white border-pink-500"
-                            : "bg-white hover:border-pink-500"
-                        }`}
-                      >
-                        ${value}
-                      </button>
-                    )
-                  )}
+                  {[25, 50, 100, 250].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() =>
+                        selectAmount(value)
+                      }
+                      className={`p-4 rounded-xl border font-bold transition ${
+                        amount == value
+                          ? "bg-pink-500 text-white border-pink-500"
+                          : "bg-white hover:border-pink-500"
+                      }`}
+                    >
+                      ${value}
+                    </button>
+                  ))}
                 </div>
 
                 <input
                   type="number"
                   placeholder="Custom Amount"
                   value={customAmount}
-                  onChange={
-                    handleCustomAmount
-                  }
+                  onChange={handleCustomAmount}
                   className="w-full border rounded-xl p-4 outline-none focus:ring-2 focus:ring-pink-500"
                 />
               </div>
 
-              {/* ================= NAME ================= */}
+              {/* NAME */}
               <div className="mb-5">
                 <label className="block mb-2 font-semibold">
                   Full Name
@@ -290,7 +222,7 @@ export default function Donate() {
                 />
               </div>
 
-              {/* ================= EMAIL ================= */}
+              {/* EMAIL */}
               <div className="mb-5">
                 <label className="block mb-2 font-semibold">
                   Email Address
@@ -307,7 +239,7 @@ export default function Donate() {
                 />
               </div>
 
-              {/* ================= PHONE ================= */}
+              {/* PHONE */}
               <div className="mb-5">
                 <label className="block mb-2 font-semibold">
                   Phone Number
@@ -323,7 +255,7 @@ export default function Donate() {
                 />
               </div>
 
-              {/* ================= PAYMENT ================= */}
+              {/* PAYMENT */}
               <div className="mb-5">
                 <label className="block mb-2 font-semibold">
                   Payment Method
@@ -349,7 +281,7 @@ export default function Donate() {
                 </select>
               </div>
 
-              {/* ================= MESSAGE ================= */}
+              {/* MESSAGE */}
               <div className="mb-6">
                 <label className="block mb-2 font-semibold">
                   Message
@@ -365,15 +297,12 @@ export default function Donate() {
                 />
               </div>
 
-              {/* ================= BUTTON ================= */}
+              {/* BUTTON */}
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-pink-500 hover:bg-pink-600 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl transition"
+                className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 rounded-xl transition"
               >
-                {loading
-                  ? "Processing..."
-                  : "Donate Now"}
+                Donate Now
               </button>
             </form>
           </motion.div>
@@ -383,17 +312,9 @@ export default function Donate() {
       {/* ================= CTA ================= */}
       <section className="py-24 bg-blue-950 text-white text-center px-6">
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 40,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 0.8,
-          }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto"
         >
           <h2 className="text-5xl font-extrabold mb-6">
@@ -401,9 +322,9 @@ export default function Donate() {
           </h2>
 
           <p className="text-gray-300 text-lg leading-8 mb-10">
-            Your support enables EHCA to
-            continue delivering hope, care
-            and sustainable community impact.
+            Your support enables EHCA to continue
+            delivering hope, care and sustainable
+            community impact.
           </p>
 
           <button className="bg-pink-500 hover:bg-pink-600 px-8 py-4 rounded-2xl font-bold transition">

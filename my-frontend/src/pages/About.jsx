@@ -41,7 +41,7 @@ export default function About() {
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          src="/images/img1.jpg"
+          src="/slide/img1.jpg"
           alt="Who we are"
           className="w-full md:w-1/2 h-[500px] object-cover rounded-3xl shadow-2xl"
         />
