@@ -72,6 +72,16 @@ router.post("/", async (req, res) => {
 });
 
 /* ================= GET ALL DONATIONS ================= */
+router.post("/test", (req, res) => {
+  console.log("TEST ROUTE HIT");
+  
+  res.json({
+    success: true,
+    message: "Donation routes working",
+  });
+});
+
+
 router.get("/", verifyToken, async (req, res) => {
   try {
     const donations = await Donation.find()
