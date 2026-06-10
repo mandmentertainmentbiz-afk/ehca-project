@@ -62,7 +62,7 @@ try {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        fullName: form.fullName.trim(),
+       fullName: form.fullName.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
         amount: Number(amount),
@@ -74,17 +74,25 @@ try {
 
   const data = await response.json();
 
+  console.log("SERVER RESPONSE:", data);
+
   if (!response.ok) {
     throw new Error(
+      data.error ||
       data.message ||
-        "Donation request failed"
+      JSON.stringify(data)
     );
   }
 
-  alert(
-    data.message ||
-      "Donation submitted successfully"
-  );
+  alert("Donation submitted successfully");
+
+} catch (error) {
+  console.error("DONATION ERROR:", error);
+
+  alert(error.message);
+} finally {
+  setLoading(false);
+}
 
   /* RESET */
   setAmount("");
