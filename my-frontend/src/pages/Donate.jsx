@@ -2,124 +2,123 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 export default function Donate() {
-const [amount, setAmount] = useState("");
-const [customAmount, setCustomAmount] = useState("");
-const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState("");
+  const [customAmount, setCustomAmount] = useState("");
+  const [loading, setLoading] = useState(false);
 
-const [form, setForm] = useState({
-fullName: "",
-email: "",
-phone: "",
-message: "",
-paymentMethod: "bank",
-});
-
-/* ================= API URL ================= */
-const API_URL =
-import.meta.env.VITE_API_URL ||
-"https://ehca-project-1.onrender.com";
-
-/* ================= HANDLE CHANGE ================= */
-const handleChange = (e) => {
-const { name, value } = e.target;
-
-setForm((prev) => ({
-  ...prev,
-  [name]: value,
-}));
-
-};
-
-/* ================= SELECT AMOUNT ================= */
-const selectAmount = (value) => {
-setAmount(value);
-setCustomAmount("");
-};
-
-/* ================= CUSTOM AMOUNT ================= */
-const handleCustomAmount = (e) => {
-setCustomAmount(e.target.value);
-setAmount(e.target.value);
-};
-
-/* ================= SUBMIT ================= */
-const handleSubmit = async (e) => {
-e.preventDefault();
-
-if (!amount) {
-  alert("Please select donation amount");
-  return;
-}
-
-try {
-  setLoading(true);
-
-  const response = await fetch(
-    `${API_URL}/api/donations`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-       fullName: form.fullName.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        amount: Number(amount),
-        paymentMethod: form.paymentMethod,
-        message: form.message.trim(),
-      }),
-    }
-  );
-
-  const data = await response.json();
-
-  console.log("SERVER RESPONSE:", data);
-
-  if (!response.ok) {
-    throw new Error(
-      data.error ||
-      data.message ||
-      JSON.stringify(data)
-    );
-  }
-
-  alert("Donation submitted successfully");
-
-} catch (error) {
-  console.error("DONATION ERROR:", error);
-
-  alert(error.message);
-} finally {
-  setLoading(false);
-}
-
-  /* RESET */
-  setAmount("");
-  setCustomAmount("");
-
-  setForm({
+  const [form, setForm] = useState({
     fullName: "",
     email: "",
     phone: "",
     message: "",
     paymentMethod: "bank",
   });
-} catch (error) {
-  console.error(
-    "DONATION ERROR:",
-    error
-  );
 
-  alert(
-    error.message ||
-      "Unable to connect to server"
-  );
-} finally {
-  setLoading(false);
-}
+  /* ================= API URL ================= */
+  const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "https://ehca-project-1.onrender.com";
 
-};
+  console.log("API URL:", API_URL);
+
+  /* ================= HANDLE CHANGE ================= */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  /* ================= SELECT AMOUNT ================= */
+  const selectAmount = (value) => {
+    setAmount(value);
+    setCustomAmount("");
+  };
+
+  /* ================= CUSTOM AMOUNT ================= */
+  const handleCustomAmount = (e) => {
+    const value = e.target.value;
+
+    setCustomAmount(value);
+    setAmount(value);
+  };
+
+  /* ================= SUBMIT ================= */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!amount) {
+      alert("Please select donation amount");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        fullName: form.fullName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        amount: Number(amount),
+        paymentMethod: form.paymentMethod,
+        message: form.message.trim(),
+      };
+
+      console.log("SENDING:", payload);
+
+      const response = await fetch(
+        `${API_URL}/api/donations`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("SERVER RESPONSE:", data);
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          data.message ||
+          "Failed to submit donation"
+        );
+      }
+
+      alert("Donation submitted successfully");
+
+      /* RESET */
+      setAmount("");
+      setCustomAmount("");
+
+      setForm({
+        fullName: "",
+        email: "",
+        phone: "",
+        message: "",
+        paymentMethod: "bank",
+      });
+
+    } catch (error) {
+      console.error(
+        "DONATION ERROR:",
+        error
+      );
+
+      alert(
+        error.message ||
+        "Unable to connect to server"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
 return (
 <div className="font-sans text-gray-800">
