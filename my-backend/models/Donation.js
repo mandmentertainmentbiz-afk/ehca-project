@@ -2,35 +2,12 @@ import mongoose from "mongoose";
 
 const donationSchema = new mongoose.Schema(
   {
-    fullName: {
-      type: String,
-      required: true,
-    },
-
-    email: {
-      type: String,
-      required: true,
-    },
-
-    phone: {
-      type: String,
-      default: "",
-    },
-
-    amount: {
-      type: Number,
-      required: true,
-    },
-
-    paymentMethod: {
-      type: String,
-      default: "bank",
-    },
-
-    message: {
-      type: String,
-      default: "",
-    },
+    fullName: String,
+    email: String,
+    phone: String,
+    amount: Number,
+    paymentMethod: String,
+    message: String,
 
     status: {
       type: String,
