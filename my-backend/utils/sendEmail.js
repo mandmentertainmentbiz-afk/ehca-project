@@ -3,44 +3,29 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-/* ================= EMAIL TRANSPORTER ================= */
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // must be false for port 587
-  family: 4, // force IPv4
+  secure: false,
 
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 
-  tls: {
-    rejectUnauthorized: false,
-  },
+  family: 4, // Force IPv4
 });
 
-/* ================= VERIFY SMTP ================= */
 transporter.verify((error, success) => {
   if (error) {
-    console.error("❌ SMTP CONNECTION ERROR:");
-    console.error(error);
+    console.log("SMTP CONNECTION ERROR:", error);
   } else {
-    console.log("✅ SMTP SERVER READY");
+    console.log("SMTP READY");
   }
 });
 
-/* ================= SEND EMAIL FUNCTION ================= */
-const sendEmail = async ({
-  to,
-  subject,
-  html,
-}) => {
+export const sendEmail = async ({ to, subject, html }) => {
   try {
-    if (!to) {
-      throw new Error("Recipient email is required");
-    }
-
     const info = await transporter.sendMail({
       from: `"EHCA NGO" <${process.env.EMAIL_USER}>`,
       to,
@@ -48,14 +33,10 @@ const sendEmail = async ({
       html,
     });
 
-    console.log("✅ EMAIL SENT SUCCESSFULLY");
-    console.log("📧 Message ID:", info.messageId);
-
+    console.log("Email sent:", info.messageId);
     return info;
   } catch (error) {
-    console.error("❌ SEND EMAIL ERROR:");
-    console.error(error);
-
+    console.error("EMAIL ERROR:", error);
     throw error;
   }
 };
