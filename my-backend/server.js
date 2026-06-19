@@ -22,10 +22,6 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-
-  // Custom Domains
-  "https://elevatehopecharity.org",
-  "https://www.elevatehopecharity.org",
 ];
 
 app.use(
@@ -38,7 +34,7 @@ app.use(
         return callback(null, true);
       }
 
-      // Allow localhost + custom domains
+      // Allow localhost
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
@@ -46,7 +42,7 @@ app.use(
       // Allow all Vercel deployments
       if (
         typeof origin === "string" &&
-        origin.endsWith(".vercel.app")
+        origin.includes(".vercel.app")
       ) {
         return callback(null, true);
       }
