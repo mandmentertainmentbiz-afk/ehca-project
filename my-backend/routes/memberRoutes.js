@@ -288,209 +288,97 @@ router.get(
 
 /* ================= APPROVE MEMBER ================= */
 router.put(
-  "/:id/approve",
-  verifyToken,
-  async (req, res) => {
-    try {
-      const member =
-        await Member.findById(
-          req.params.id
-        );
-
-      if (!member) {
-        return res.status(404).json({
-          success: false,
-          message: "Member not found",
-        });
-      }
-
-      /* UPDATE MEMBER */
-      if (!member.membershipId) {
-        member.membershipId =
-          generateMembershipId();
-      }
-
-      member.approved = true;
-      member.status = "approved";
-
-      await member.save();
-
-      /* RETURN SUCCESS IMMEDIATELY */
-      res.status(200).json({
-        success: true,
-        message:
-          "Member approved successfully",
-        member,
-      });
-
-      /* SEND EMAIL IN BACKGROUND */
-      sendEmail({
-        to: member.email,
-        subject:
-          "EHCA Membership Approved",
-        html: emailTemplate({
-          title:
-            "Membership Approved 🎉",
-
-          message:
-            "We are pleased to inform you that your membership request has been approved.",
-
-          color: "#16a34a",
-
-          memberName:
-            member.fullName,
-
-          extraContent: `
-            <div style="
-              background:#f1f5f9;
-              padding:20px;
-              border-radius:10px;
-              margin:25px 0;
-            ">
-              <p>
-                <b>Membership ID:</b>
-              </p>
-
-              <h2 style="
-                color:#2563eb;
-                letter-spacing:2px;
-              ">
-                ${member.membershipId}
-              </h2>
-            </div>
-          `,
-        }),
-      })
-        .then(() => {
-          console.log(
-            "✅ Approval email sent:",
-            member.email
-          );
-        })
-        .catch((err) => {
-          console.error(
-            "❌ Approval email failed:"
-          );
-          console.error(
-            err.message
-          );
-        });
-
-    } catch (err) {
-      console.error(
-        "❌ APPROVE MEMBER ERROR:"
-      );
-
-      console.error(err);
-
-      res.status(500).json({
-        success: false,
-        message:
-          err.message ||
-          "Failed to approve member",
-      });
-    }
-  }
+"/:id/approve",
+verifyToken,
+async (req, res) => {
+try {
+const member = await Member.findById(
+req.params.id
 );
-      /* ================= UPDATE MEMBER ================= */
-      if (!member.membershipId) {
-        member.membershipId =
-          generateMembershipId();
-      }
 
-      member.approved = true;
-      member.status = "approved";
-
-      await member.save();
-
-      /* ================= SEND EMAIL
-      try {
-
-        await sendEmail({
-          to: member.email,
-
-          subject:
-            "EHCA Membership Approved",
-
-          html: emailTemplate({
-            title:
-              "Membership Approved 🎉",
-
-            message:
-              "We are pleased to inform you that your membership request has been approved.",
-
-            color: "#16a34a",
-
-            memberName:
-              member.fullName,
-
-            extraContent: `
-              <div style="
-                background:#f1f5f9;
-                padding:20px;
-                border-radius:10px;
-                margin:25px 0;
-              ">
-
-                <p style="
-                  margin:0 0 10px 0;
-                ">
-                  <b>Membership ID:</b>
-                </p>
-
-                <h2 style="
-                  margin:0;
-                  color:#2563eb;
-                  letter-spacing:2px;
-                ">
-                  ${member.membershipId}
-                </h2>
-
-              </div>
-            `,
-          }),
-        });
-
-        console.log(
-          "✅ Approval email sent:",
-          member.email
-        );
-
-      } catch (emailError) {
-
-        console.error(
-          "❌ EMAIL ERROR:"
-        );
-
-        console.error(
-          emailError.message
-        );
-      }
-
-      res.status(200).json({
-        success: true,
-        message:
-          "Member approved successfully",
-        member,
-      });
-
-    } catch (err) {
-
-      console.error(
-        "❌ APPROVE MEMBER ERROR:"
-      );
-
-      console.error(err);
-
-      res.status(500).json({
-        success: false,
-        message:
-          err.message ||
-          "Failed to approve member",
-      });
-    }
+  if (!member) {
+    return res.status(404).json({
+      success: false,
+      message: "Member not found",
+    });
   }
-);  ================= */
+
+  if (!member.membershipId) {
+    member.membershipId =
+      generateMembershipId();
+  }
+
+  member.approved = true;
+  member.status = "approved";
+
+  await member.save();
+
+  res.status(200).json({
+    success: true,
+    message:
+      "Member approved successfully",
+    member,
+  });
+
+  setImmediate(async () => {
+  try {
+    await sendEmail({
+      to: member.email,
+      subject: "EHCA Membership Approved",
+      html: emailTemplate({
+        title: "Membership Approved 🎉",
+        message:
+          "We are pleased to inform you that your membership request has been approved.",
+        color: "#16a34a",
+        memberName: member.fullName,
+        extraContent: `
+          <div style="
+            background:#f1f5f9;
+            padding:20px;
+            border-radius:10px;
+            margin:25px 0;
+          ">
+            <p><b>Membership ID:</b></p>
+            <h2 style="
+              color:#2563eb;
+              letter-spacing:2px;
+            ">
+              ${member.membershipId}
+            </h2>
+          </div>
+        `,
+      }),
+    });
+
+    console.log(
+      "✅ Approval email sent:",
+      member.email
+    );
+  } catch (err) {
+    console.error(
+      "❌ Approval email failed:"
+    );
+    console.error(err.message);
+  }
+});
+
+} catch (err) {
+  console.error(
+    "❌ APPROVE MEMBER ERROR:"
+  );
+
+  console.error(err);
+
+  res.status(500).json({
+    success: false,
+    message:
+      err.message ||
+      "Failed to approve member",
+  });
+}
+
+}
+);
 
 /* ================= REJECT MEMBER ================= */
 router.put(

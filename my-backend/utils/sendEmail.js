@@ -13,10 +13,14 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 
-  family: 4, // Force IPv4
+  tls: {
+    rejectUnauthorized: false,
+  },
+
+  family: 4,
 });
 
-transporter.verify((error, success) => {
+transporter.verify((error) => {
   if (error) {
     console.log("SMTP CONNECTION ERROR:", error);
   } else {
@@ -25,20 +29,12 @@ transporter.verify((error, success) => {
 });
 
 export const sendEmail = async ({ to, subject, html }) => {
-  try {
-    const info = await transporter.sendMail({
-      from: `"EHCA NGO" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
-
-    console.log("Email sent:", info.messageId);
-    return info;
-  } catch (error) {
-    console.error("EMAIL ERROR:", error);
-    throw error;
-  }
+  return transporter.sendMail({
+    from: `"EHCA NGO" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    html,
+  });
 };
 
 export default sendEmail;
