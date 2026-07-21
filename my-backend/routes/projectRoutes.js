@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import Project from "../models/Project.js";
-import { upload } from "../middleware/upload.js";
+import upload from "../middleware/upload.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();

@@ -8,6 +8,8 @@ import authRoutes from "./routes/authRoutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import donationRoutes from "./routes/donationRoutes.js";
+import pageContentRoutes from "./routes/pageContentRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 /* ================= LOAD ENV ================= */
 dotenv.config();
@@ -90,6 +92,9 @@ app.use(
   })
 );
 
+app.use("/api/page-content", pageContentRoutes); 
+
+app.use("/api/upload", uploadRoutes);
 /* ================= ROOT ROUTE ================= */
 app.get("/", (req, res) => {
   res.status(200).json({

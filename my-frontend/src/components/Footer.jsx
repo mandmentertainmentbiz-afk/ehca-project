@@ -1,9 +1,8 @@
 import {
   FaFacebook,
-  FaTelegram,
-  FaTwitter,
   FaInstagram,
-  FaWhatsapp,
+  FaYoutube,
+  FaTiktok,
 } from "react-icons/fa";
 
 import {
@@ -100,44 +99,45 @@ export default function Footer() {
         </div>
 
         {/* ================= SOCIAL ICONS ================= */}
-        <div className="flex justify-center gap-6 text-2xl mb-8">
+<div className="flex justify-center gap-6 text-2xl mb-8">
 
-          <a
-            href="#"
-            className="hover:text-blue-500 transition"
-          >
-            <FaFacebook />
-          </a>
+  <a
+    href="https://www.facebook.com/profile.php?id=61580481813493"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-blue-500 transition"
+  >
+    <FaFacebook />
+  </a>
 
-          <a
-            href="#"
-            className="hover:text-sky-400 transition"
-          >
-            <FaTelegram />
-          </a>
+  <a
+    href="https://www.instagram.com/ehca.123?igsh=c2g4MnE1eWE4bWcw"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-pink-500 transition"
+  >
+    <FaInstagram />
+  </a>
 
-          <a
-            href="#"
-            className="hover:text-blue-400 transition"
-          >
-            <FaTwitter />
-          </a>
+  <a
+    href="https://www.youtube.com/@sallyteneng"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-red-500 transition"
+  >
+    <FaYoutube />
+  </a>
 
-          <a
-            href="#"
-            className="hover:text-pink-500 transition"
-          >
-            <FaInstagram />
-          </a>
+  <a
+    href="https://www.tiktok.com/@stacysallyte"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-gray-300 transition"
+  >
+    <FaTiktok />
+  </a>
 
-          <a
-            href="#"
-            className="hover:text-green-500 transition"
-          >
-            <FaWhatsapp />
-          </a>
-
-        </div>
+</div>
 
         {/* ================= COPYRIGHT ================= */}
         <div className="border-t border-gray-700 pt-6">
