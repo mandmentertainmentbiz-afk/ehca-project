@@ -6,7 +6,7 @@ import {
 } from "react";
 
 import {
-  getPageContents,
+  getAllPageContents,
 } from "../services/pageContentService";
 
 const PageContentContext =
@@ -27,7 +27,7 @@ export const PageContentProvider = ({
         setLoading(true);
 
         const data =
-          await getPageContents();
+  await getAllPageContents();
 
         setContents(data);
 
