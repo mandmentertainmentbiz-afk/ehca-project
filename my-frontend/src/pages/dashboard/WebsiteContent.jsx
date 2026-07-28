@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
+
 import PageTabs from "../../components/dashboard/PageTabs";
 import SectionCard from "../../components/dashboard/SectionCard";
+
 import { pageDefaults } from "../../config/pageDefaults";
-import {
-  getPageContent,
-  createPageContent,
-} from "../../services/pageContentService";
+
 import {
   getPageContent,
   createPageContent,
@@ -20,32 +19,98 @@ import {
 
 export default function WebsiteContent() {
   const [activePage, setActivePage] = useState("home");
+
   const [sections, setSections] = useState([]);
+
   const [loading, setLoading] = useState(true);
+
+  const [savingOrder, setSavingOrder] =
+    useState(false);
+
   const [error, setError] = useState("");
 
   /* ================= LOAD PAGE ================= */
 
   const loadPage = async (page) => {
-    try {
-      setLoading(true);
-      setError("");
+  try {
+    setLoading(true);
+    setError("");
 
-      const data = await getPageContent(page);
+    const data = await getPageContent(page);
 
-      if (Array.isArray(data)) {
-        setSections(data);
-      } else {
-        setSections([]);
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load page content.");
+    if (Array.isArray(data)) {
+      const sorted = [...data].sort(
+        (a, b) => a.order - b.order
+      );
+
+      setSections(sorted);
+    } else {
       setSections([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    console.error(err);
+
+    setError(
+      "Failed to load page content."
+    );
+
+    setSections([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+ /* ================= Move sections locally (Up / Down) ================= */
+
+const moveSection = (index, direction) => {
+  const updated = [...sections];
+
+  if (direction === "up" && index > 0) {
+    [updated[index - 1], updated[index]] = [
+      updated[index],
+      updated[index - 1],
+    ];
+  }
+
+  if (
+    direction === "down" &&
+    index < updated.length - 1
+  ) {
+    [updated[index], updated[index + 1]] = [
+      updated[index + 1],
+      updated[index],
+    ];
+  }
+
+  setSections(updated);
+};
+
+/* ================= Save the new order to MongoDB  ================= */
+
+const saveSectionOrder = async () => {
+  try {
+    setSavingOrder(true);
+
+    await updateSectionOrder(
+      sections.map((section, index) => ({
+        id: section._id,
+        order: index,
+      }))
+    );
+
+    await loadPage(activePage);
+
+    alert("Section order saved successfully.");
+  } catch (err) {
+    console.error(err);
+
+    alert("Failed to save section order.");
+  } finally {
+    setSavingOrder(false);
+  }
+};
+
 
   /* ================= CREATE DEFAULT SECTIONS ================= */
 
@@ -84,7 +149,7 @@ export default function WebsiteContent() {
 
     alert("Sections created successfully.");
 
-    loadPage(activePage);
+    await loadPage(activePage);
 
   } catch (err) {
     console.error(err);
@@ -97,33 +162,20 @@ export default function WebsiteContent() {
 const handleDragEnd = async (result) => {
   if (!result.destination) return;
 
-  const reordered = [...sections];
+  const updated = [...sections];
 
-  const [removed] = reordered.splice(
+  const [removed] = updated.splice(
     result.source.index,
     1
   );
 
-  reordered.splice(
+  updated.splice(
     result.destination.index,
     0,
     removed
   );
 
-  setSections(reordered);
-
-  try {
-    await updateSectionOrder(
-      reordered.map((section, index) => ({
-        id: section._id,
-        order: index,
-      }))
-    );
-  } catch (err) {
-    console.error(err);
-
-    alert("Failed to save order.");
-  }
+  setSections(updated);
 };
 
   /* ================= GENERATE WEBSITE STRUCTURE ================= */
@@ -138,9 +190,10 @@ const generateWebsiteStructure = async () => {
     setLoading(true);
 
     for (const page in pageDefaults) {
-      const sections = pageDefaults[page];
+  const defaultSections =
+    pageDefaults[page];
 
-      for (const sectionName of sections) {
+  for (const sectionName of defaultSections) {
         try {
           await createPageContent({
             page,
@@ -170,7 +223,7 @@ const generateWebsiteStructure = async () => {
       "Website structure generated successfully."
     );
 
-    loadPage(activePage);
+    await loadPage(activePage);
 
   } catch (err) {
     console.error(err);
@@ -184,7 +237,7 @@ const generateWebsiteStructure = async () => {
   /* ================= LOAD WHEN PAGE CHANGES ================= */
 
   useEffect(() => {
-    loadPage(activePage);
+    await loadPage(activePage);
   }, [activePage]);
 
   return (
@@ -260,45 +313,104 @@ const generateWebsiteStructure = async () => {
     )}
 
   {!loading &&
-    sections.length > 0 && (
-      <>
+  sections.length > 0 && (
 
-        {/* ===== Reorder Button ===== */}
+    <>
+      <div className="d-flex justify-content-between align-items-center mb-3">
 
-        <div className="d-flex justify-content-end mb-3">
-          <button
-            className="btn btn-outline-primary"
-            onClick={saveSectionOrder}
-          >
-            💾 Save Section Order
-          </button>
-        </div>
+        <h5 className="mb-0">
+          {activePage.toUpperCase()} Sections
+        </h5>
 
-        {/* ===== Section Cards ===== */}
+        <button
+          className="btn btn-success"
+          onClick={saveSectionOrder}
+          disabled={savingOrder}
+        >
+          {savingOrder
+            ? "Saving..."
+            : "💾 Save Section Order"}
+        </button>
 
-        {sections.map((section, index) => (
-          <SectionCard
-            key={section._id}
-            section={section}
-            index={index}
-            total={sections.length}
+      </div>
 
-            onMoveUp={() =>
-              moveSection(index, "up")
-            }
+      <DragDropContext
+        onDragEnd={handleDragEnd}
+      >
 
-            onMoveDown={() =>
-              moveSection(index, "down")
-            }
+        <Droppable
+          droppableId="sections"
+        >
 
-            onUpdated={() =>
-              loadPage(activePage)
-            }
-          />
-        ))}
+          {(provided) => (
 
-      </>
-    )}
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+
+              {sections.map(
+                (section, index) => (
+
+                  <Draggable
+                    key={section._id}
+                    draggableId={section._id}
+                    index={index}
+                  >
+
+                    {(provided) => (
+
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+
+                        <SectionCard
+  section={section}
+  index={index}
+  total={sections.length}
+  onMoveUp={() =>
+    moveSection(index, "up")
+  }
+  onMoveDown={() =>
+    moveSection(index, "down")
+  }
+  onUpdated={() =>
+    loadPage(activePage)
+  }
+  onDeleted={() =>
+    loadPage(activePage)
+  }
+/>
+<div
+  {...dragHandleProps}
+  className="cursor-grab"
+>
+  <GripVertical size={18} />
+</div>
+                      </div>
+
+                    )}
+
+                  </Draggable>
+
+                )
+              )}
+
+              {provided.placeholder}
+
+            </div>
+
+          )}
+
+        </Droppable>
+
+      </DragDropContext>
+
+    </>
+
+)}
 
 </div>
 

@@ -1,18 +1,39 @@
 import { useState } from "react";
+
+import {
+  ChevronDown,
+  ChevronRight,
+  GripVertical,
+  Pencil,
+  Trash2,
+  Image as ImageIcon,
+} from "lucide-react";
+
 import ContentEditor from "./ContentEditor";
 
-const API_URL = "https://ehca-project-1.onrender.com";
+import {
+  deletePageContent,
+} from "../../services/pageContentService";
+
+const API_URL =
+  import.meta.env.VITE_API_URL?.replace("/api", "") ||
+  "https://ehca-project-1.onrender.com";
 
 export default function SectionCard({
   section,
   index,
   total,
+  dragHandleProps,
   onMoveUp,
   onMoveDown,
   onUpdated,
+  onDeleted,
 }) {
-  const [showEditor, setShowEditor] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [showEditor, setShowEditor] =
+    useState(false);
+
+  const [collapsed, setCollapsed] =
+    useState(true);
 
   const imageUrl = section.image
     ? section.image.startsWith("http")
@@ -20,9 +41,35 @@ export default function SectionCard({
       : `${API_URL}${section.image}`
     : null;
 
+  const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `Delete "${section.title || "Untitled Section"}"?\n\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deletePageContent(section._id);
+
+      alert(
+        "Section deleted successfully."
+      );
+
+      if (onDeleted) {
+        onDeleted();
+      }
+    } catch (err) {
+      console.error(err);
+
+      alert(
+        "Failed to delete section."
+      );
+    }
+  };
+
   return (
     <>
-      <div className="card shadow-sm border-0 mb-3">
+      <div className="card shadow-sm border-0 mb-4">
 
         {/* ================= HEADER ================= */}
 
@@ -30,42 +77,73 @@ export default function SectionCard({
 
           <div className="d-flex justify-content-between align-items-center">
 
-            <div>
+            <div className="d-flex align-items-center gap-3">
 
-              <h5 className="mb-1 text-capitalize">
-                {expanded ? "▲" : "▼"}{" "}
-                {section.section?.replace(/-/g, " ") ||
-                  "Unnamed Section"}
-              </h5>
+              <div
+  {...dragHandleProps}
+  className="cursor-grab"
+  title="Drag to reorder"
+>
+  <GripVertical
+    size={18}
+    className="text-secondary"
+  />
+</div>
 
-              <small className="text-muted">
-                {(section.page?.toUpperCase() || "UNKNOWN")} PAGE
-              </small>
+              <button
+                className="btn btn-sm btn-light"
+                onClick={() =>
+                  setCollapsed(
+                    (prev) => !prev
+                  )
+                }
+              >
+                {collapsed ? (
+                  <ChevronRight
+                    size={18}
+                  />
+                ) : (
+                  <ChevronDown
+                    size={18}
+                  />
+                )}
+              </button>
 
-              <br />
+              <div>
 
-              <small className="text-secondary">
-                Order: {section.order}
-              </small>
+                <h5 className="mb-1 text-capitalize">
+                  {section.section?.replace(/-/g, " ") || "Unnamed Section"}
+                </h5>
 
-              <br />
+                <div className="d-flex flex-wrap gap-2">
 
-              <small className="text-info">
-                {section.items?.length || 0} Item(s)
-              </small>
+                  <span className="badge bg-primary">
+                    {section.page || "Unknown"}
+                  </span>
+
+                  <span className="badge bg-secondary">
+                    Order {section.order}
+                  </span>
+
+                  <span
+                    className={`badge ${
+                      section.isActive
+                        ? "bg-success"
+                        : "bg-danger"
+                    }`}
+                  >
+                    {section.isActive !== false
+  ? "Active"
+  : "Hidden"}
+                  </span>
+
+                </div>
+
+              </div>
 
             </div>
 
             <div className="d-flex gap-2">
-
-              <button
-                className="btn btn-light btn-sm"
-                onClick={() =>
-                  setExpanded(!expanded)
-                }
-              >
-                {expanded ? "Hide" : "Show"}
-              </button>
 
               <button
                 className="btn btn-outline-secondary btn-sm"
@@ -78,7 +156,9 @@ export default function SectionCard({
 
               <button
                 className="btn btn-outline-secondary btn-sm"
-                disabled={index === total - 1}
+                disabled={
+                  index === total - 1
+                }
                 onClick={onMoveDown}
                 title="Move Down"
               >
@@ -86,10 +166,21 @@ export default function SectionCard({
               </button>
 
               <button
-                className="btn btn-primary btn-sm"
-                onClick={() => setShowEditor(true)}
+                className="btn btn-outline-primary btn-sm"
+                onClick={() =>
+                  setShowEditor(true)
+                }
+                title="Edit Section"
               >
-                ✏ Edit
+                <Pencil size={16} />
+              </button>
+
+              <button
+                className="btn btn-outline-danger btn-sm"
+                onClick={handleDelete}
+                title="Delete Section"
+              >
+                <Trash2 size={16} />
               </button>
 
             </div>
@@ -100,36 +191,45 @@ export default function SectionCard({
 
         {/* ================= BODY ================= */}
 
-        {expanded && (
-
+        {!collapsed && (
           <div className="card-body">
+            {/* ================= IMAGE ================= */}
 
-            {/* Image */}
-
-            {imageUrl && (
+            {imageUrl ? (
               <div className="mb-4">
-
                 <img
                   src={imageUrl}
                   alt={section.title || "Section"}
-                  className="img-fluid rounded shadow-sm"
+                  className="rounded shadow-sm"
                   style={{
-                    maxHeight: "250px",
                     width: "100%",
+                    maxHeight: "280px",
                     objectFit: "cover",
                   }}
                 />
+              </div>
+            ) : (
+              <div className="text-center py-4 border rounded bg-light">
+
+                <ImageIcon
+                  size={40}
+                  className="text-secondary"
+                />
+
+                <p className="text-muted mt-2 mb-0">
+                  No image uploaded
+                </p>
 
               </div>
             )}
 
-            {/* Title */}
+            {/* ================= TITLE ================= */}
 
-            <h4 className="fw-bold">
+            <h3 className="fw-bold mb-2">
               {section.title || "No Title"}
-            </h4>
+            </h3>
 
-            {/* Subtitle */}
+            {/* ================= SUBTITLE ================= */}
 
             {section.subtitle && (
               <h6 className="text-muted mb-3">
@@ -137,12 +237,26 @@ export default function SectionCard({
               </h6>
             )}
 
-            {/* Content */}
+            {/* ================= CONTENT ================= */}
 
-            <p className="text-muted">
-              {section.content ||
-                "No content available."}
-            </p>
+            <div className="mb-4">
+
+              {section.content ? (
+                <p
+                  className="text-muted mb-0"
+                  style={{
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {section.content}
+                </p>
+              ) : (
+                <p className="text-muted fst-italic mb-0">
+                  No content available.
+                </p>
+              )}
+
+            </div>
 
             {/* ================= ITEMS ================= */}
 
@@ -150,50 +264,52 @@ export default function SectionCard({
 
               <div className="mt-4">
 
-                <h6 className="fw-bold mb-3">
-                  Items
-                </h6>
+                <h5 className="fw-bold mb-3">
+                  Section Items
+                </h5>
 
                 <div className="row">
 
                   {section.items.map(
-                    (item, i) => (
+                    (item, index) => (
 
                       <div
-                        key={i}
-                        className="col-md-6 mb-3"
+                        key={index}
+                        className="col-lg-6 mb-3"
                       >
 
-                        <div className="border rounded p-3 h-100">
+                        <div className="card h-100 border-0 shadow-sm">
 
                           {item.image && (
 
                             <img
                               src={
-                                item.image.startsWith(
-                                  "http"
-                                )
+                                item.image.startsWith("http")
                                   ? item.image
                                   : `${API_URL}${item.image}`
                               }
                               alt={item.title}
-                              className="img-fluid rounded mb-3"
+                              className="card-img-top"
                               style={{
-                                height: "120px",
-                                width: "100%",
+                                height: "180px",
                                 objectFit: "cover",
                               }}
                             />
 
                           )}
 
-                          <h6 className="fw-bold">
-                            {item.title}
-                          </h6>
+                          <div className="card-body">
 
-                          <p className="mb-0 text-muted">
-                            {item.description}
-                          </p>
+                            <h6 className="fw-bold">
+                              {item.title || "Untitled"}
+                            </h6>
+
+                            <p className="text-muted mb-0">
+                              {item.description ||
+                                "No description."}
+                            </p>
+
+                          </div>
 
                         </div>
 
@@ -208,35 +324,44 @@ export default function SectionCard({
 
             )}
 
-            {/* ================= CTA ================= */}
+            {/* ================= CALL TO ACTION ================= */}
 
             {(section.buttonText ||
               section.buttonLink) && (
 
               <div className="mt-4">
 
-                <h6 className="fw-bold">
+                <hr />
+
+                <h5 className="fw-bold mb-3">
                   Call To Action
-                </h6>
+                </h5>
 
-                {section.buttonText && (
-                  <span className="badge bg-success me-2">
-                    {section.buttonText}
-                  </span>
-                )}
+                <div className="d-flex flex-wrap gap-2">
 
-                {section.buttonLink && (
-                  <span className="badge bg-secondary">
-                    {section.buttonLink}
-                  </span>
-                )}
+                  {section.buttonText && (
+
+                    <span className="badge bg-success fs-6">
+                      {section.buttonText}
+                    </span>
+
+                  )}
+
+                  {section.buttonLink && (
+
+                    <span className="badge bg-secondary fs-6">
+                      {section.buttonLink}
+                    </span>
+
+                  )}
+
+                </div>
 
               </div>
 
             )}
 
-          </div>
-
+            </div>
         )}
 
       </div>
@@ -246,12 +371,13 @@ export default function SectionCard({
       {showEditor && (
         <ContentEditor
           section={section}
-          onClose={() =>
-            setShowEditor(false)
-          }
+          onClose={() => setShowEditor(false)}
           onSaved={() => {
             setShowEditor(false);
-            onUpdated();
+
+            if (onUpdated) {
+              onUpdated();
+            }
           }}
         />
       )}
