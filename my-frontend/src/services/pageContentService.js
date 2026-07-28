@@ -102,6 +102,18 @@ export const uploadImage = async (file) => {
   );
 };
 
+
+// ===============================
+// UPDATE SECTION ORDER
+// ===============================
+export const updateSectionOrder = async (sections) => {
+  const response = await api.put("/reorder", {
+    sections,
+  });
+
+  return response.data;
+};
+
 // ===============================
 // EXPORT SERVICE
 // ===============================
@@ -110,6 +122,7 @@ const pageContentService = {
   getPageContent,
   createPageContent,
   updatePageContent,
+  updateSectionOrder,
   deletePageContent,
   uploadImage,
 };
