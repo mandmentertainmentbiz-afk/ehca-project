@@ -29,8 +29,10 @@ export default function App() {
 
         <div className="flex flex-col min-h-screen">
 
+          {/* Navigation */}
           <Navbar />
 
+          {/* Main Content */}
           <main className="flex-grow">
 
             <Routes>
@@ -70,11 +72,22 @@ export default function App() {
               />
 
               {/* ==========================
-                  PROTECTED ADMIN ROUTES
+                  ADMIN ROUTES
               ========================== */}
 
+              {/* Website Content Manager (Main Admin Page) */}
               <Route
                 path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <WebsiteContent />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Old Dashboard */}
+              <Route
+                path="/admin/dashboard"
                 element={
                   <ProtectedRoute>
                     <AdminDashboard />
@@ -82,6 +95,7 @@ export default function App() {
                 }
               />
 
+              {/* Add Project */}
               <Route
                 path="/admin/add"
                 element={
@@ -91,6 +105,7 @@ export default function App() {
                 }
               />
 
+              {/* Members */}
               <Route
                 path="/admin/members"
                 element={
@@ -100,6 +115,7 @@ export default function App() {
                 }
               />
 
+              {/* Donations */}
               <Route
                 path="/admin/donations"
                 element={
@@ -109,10 +125,7 @@ export default function App() {
                 }
               />
 
-              {/* ==========================
-                  WEBSITE CONTENT MANAGER
-              ========================== */}
-
+              {/* Website Content */}
               <Route
                 path="/admin/website-content"
                 element={
@@ -123,7 +136,7 @@ export default function App() {
               />
 
               {/* ==========================
-                  FALLBACK
+                  FALLBACK ROUTE
               ========================== */}
 
               <Route
@@ -135,6 +148,7 @@ export default function App() {
 
           </main>
 
+          {/* Footer */}
           <Footer />
 
         </div>
