@@ -35,7 +35,7 @@ export const getAllPageContents = async () => {
 // GET CONTENT FOR ONE PAGE
 // ===============================
 export const getPageContent = async (page) => {
-  const response = await api.get(`/${page}`);
+  const response = await api.get(`/page/${page}`);
   return response.data;
 };
 
@@ -107,7 +107,7 @@ export const uploadImage = async (file) => {
 // UPDATE SECTION ORDER
 // ===============================
 export const updateSectionOrder = async (sections) => {
-  const response = await api.put("/reorder", {
+  const response = await api.put("/reorder/all", {
     sections,
   });
 
