@@ -13,37 +13,50 @@ import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/* ===================================
+/* ==========================================
    PUBLIC ROUTES
-=================================== */
+========================================== */
 
-// Get every section
+// Get all page content
+// GET /api/page-content
 router.get("/", getPageContents);
 
-// Get all sections for one page
-// Example:
-// /api/page-content/home
-// /api/page-content/about
-router.get("/:page", getPageContent);
+// Get all sections for a specific page
+// Examples:
+// GET /api/page-content/page/home
+// GET /api/page-content/page/about
+router.get("/page/:page", getPageContent);
 
-/* ===================================
+/* ==========================================
    ADMIN ROUTES
-=================================== */
+========================================== */
 
-// Create section
+// Create a new section
+// POST /api/page-content
 router.post("/", protect, createPageContent);
 
-// Update section
-router.put("/:id", protect, updatePageContent);
-
-// Delete section
-router.delete("/:id", protect, deletePageContent);
-
-// Update section order
+// Reorder sections
+// PUT /api/page-content/reorder/all
 router.put(
   "/reorder/all",
   protect,
   updateSectionOrder
+);
+
+// Update a section
+// PUT /api/page-content/:id
+router.put(
+  "/:id",
+  protect,
+  updatePageContent
+);
+
+// Delete a section
+// DELETE /api/page-content/:id
+router.delete(
+  "/:id",
+  protect,
+  deletePageContent
 );
 
 export default router;

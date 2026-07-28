@@ -108,37 +108,55 @@ const handleUpdate = async (e) => {
       </h1>
 
       
-      <div className="grid md:grid-cols-3 gap-6 p-6">
+      <div className="grid md:grid-cols-4 gap-6 p-6">
 
   <Link to="/admin/add">
-    <div className="bg-white p-6 rounded-2xl shadow-lg">
+    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition">
       <h2 className="text-2xl font-bold">
         Add Projects
       </h2>
 
-      <p>Manage NGO projects</p>
+      <p className="text-gray-600">
+        Manage NGO projects
+      </p>
     </div>
   </Link>
 
   <Link to="/admin/members">
-    <div className="bg-white p-6 rounded-2xl shadow-lg">
+    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition">
       <h2 className="text-2xl font-bold">
         Membership Requests
       </h2>
 
-      <p>
+      <p className="text-gray-600">
         Approve members and partners
       </p>
     </div>
   </Link>
 
-  <Link
-  to="/admin/donations"
-  className="bg-white p-6 rounded-2xl shadow-lg">
-    <h2 className="text-2xl font-bold">
-  Manage Donations
-  </h2>
-</Link>
+  <Link to="/admin/donations">
+    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition">
+      <h2 className="text-2xl font-bold">
+        Manage Donations
+      </h2>
+
+      <p className="text-gray-600">
+        View donations
+      </p>
+    </div>
+  </Link>
+
+  <Link to="/admin/website-content">
+    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition border-l-4 border-blue-600">
+      <h2 className="text-2xl font-bold">
+        🌐 Website Content
+      </h2>
+
+      <p className="text-gray-600">
+        Edit all website pages
+      </p>
+    </div>
+  </Link>
 
 </div>
 

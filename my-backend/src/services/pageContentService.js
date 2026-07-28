@@ -4,17 +4,18 @@ const API_URL =
   import.meta.env.VITE_API_URL ||
   "http://localhost:5000/api";
 
-/* ==========================
+/* ==========================================
    AXIOS INSTANCE
-========================== */
+========================================== */
 
 const pageContentAPI = axios.create({
   baseURL: `${API_URL}/page-content`,
+  withCredentials: true,
 });
 
-/* ==========================
+/* ==========================================
    ATTACH ADMIN TOKEN
-========================== */
+========================================== */
 
 pageContentAPI.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
@@ -26,83 +27,92 @@ pageContentAPI.interceptors.request.use((config) => {
   return config;
 });
 
-/* ==========================
+/* ==========================================
    GET ALL PAGE CONTENT
-========================== */
+========================================== */
 
 export const getAllPageContents = async () => {
-  const response = await pageContentAPI.get("/");
-  return response.data;
+  const { data } = await pageContentAPI.get("/");
+  return data;
 };
 
-/* ==========================
-   GET PAGE CONTENT
-========================== */
+/* ==========================================
+   GET CONTENT FOR A PAGE
+   Example:
+   /api/page-content/page/home
+========================================== */
 
 export const getPageContent = async (page) => {
-  const response = await pageContentAPI.get(`/${page}`);
-  return response.data;
+  const { data } = await pageContentAPI.get(
+    `/page/${page}`
+  );
+
+  return data;
 };
 
-/* ==========================
+/* ==========================================
    CREATE CONTENT
-========================== */
+========================================== */
 
-export const createPageContent = async (data) => {
-  const response = await pageContentAPI.post("/", data);
-  return response.data;
+export const createPageContent = async (content) => {
+  const { data } = await pageContentAPI.post(
+    "/",
+    content
+  );
+
+  return data;
 };
 
-/* ==========================
+/* ==========================================
    UPDATE CONTENT
-========================== */
+========================================== */
 
 export const updatePageContent = async (
   id,
-  data
+  updates
 ) => {
-  const response = await pageContentAPI.put(
+  const { data } = await pageContentAPI.put(
     `/${id}`,
-    data
+    updates
   );
 
-  return response.data;
+  return data;
 };
 
-/* ==========================
+/* ==========================================
    UPDATE SECTION ORDER
-========================== */
+========================================== */
 
 export const updateSectionOrder = async (
   sections
 ) => {
-  const response = await pageContentAPI.put(
+  const { data } = await pageContentAPI.put(
     "/reorder/all",
     {
       sections,
     }
   );
 
-  return response.data;
+  return data;
 };
 
-/* ==========================
+/* ==========================================
    DELETE CONTENT
-========================== */
+========================================== */
 
 export const deletePageContent = async (
   id
 ) => {
-  const response = await pageContentAPI.delete(
+  const { data } = await pageContentAPI.delete(
     `/${id}`
   );
 
-  return response.data;
+  return data;
 };
 
-/* ==========================
+/* ==========================================
    UPLOAD IMAGE
-========================== */
+========================================== */
 
 export const uploadImage = async (file) => {
   const formData = new FormData();
@@ -111,7 +121,7 @@ export const uploadImage = async (file) => {
 
   const token = localStorage.getItem("token");
 
-  const response = await axios.post(
+  const { data } = await axios.post(
     `${API_URL}/upload`,
     formData,
     {
@@ -120,15 +130,20 @@ export const uploadImage = async (file) => {
         "Content-Type":
           "multipart/form-data",
       },
+      withCredentials: true,
     }
   );
 
-  return response.data.imageUrl;
+  return (
+    data.imageUrl ||
+    data.image ||
+    ""
+  );
 };
 
-/* ==========================
+/* ==========================================
    EXPORT SERVICE
-========================== */
+========================================== */
 
 const pageContentService = {
   getAllPageContents,
