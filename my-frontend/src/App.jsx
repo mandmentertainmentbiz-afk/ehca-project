@@ -75,15 +75,24 @@ export default function App() {
                   ADMIN ROUTES
               ========================== */}
 
+              <Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
+/>
+
               {/* Website Content Manager (Main Admin Page) */}
               <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <WebsiteContent />
-                  </ProtectedRoute>
-                }
-              />
+  path="/admin/website-content"
+  element={
+    <ProtectedRoute>
+      <WebsiteContent />
+    </ProtectedRoute>
+  }
+/>
 
               {/* Old Dashboard */}
               <Route
