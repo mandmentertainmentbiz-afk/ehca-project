@@ -361,27 +361,19 @@ const generateWebsiteStructure = async () => {
                     {(provided) => (
 
                       <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
+  ref={provided.innerRef}
+  {...provided.draggableProps}
+>
 
-                        <SectionCard
+                       <SectionCard
   section={section}
   index={index}
   total={sections.length}
-  onMoveUp={() =>
-    moveSection(index, "up")
-  }
-  onMoveDown={() =>
-    moveSection(index, "down")
-  }
-  onUpdated={() =>
-    loadPage(activePage)
-  }
-  onDeleted={() =>
-    loadPage(activePage)
-  }
+  dragHandleProps={provided.dragHandleProps}
+  onMoveUp={() => moveSection(index, "up")}
+  onMoveDown={() => moveSection(index, "down")}
+  onUpdated={() => loadPage(activePage)}
+  onDeleted={() => loadPage(activePage)}
 />
 <div
   {...dragHandleProps}
