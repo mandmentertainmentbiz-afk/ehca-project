@@ -176,4 +176,4 @@ export const updateSectionOrder = async (req, res) => {
       message: "Failed to update section order.",
     });
   }
-};
+}; 

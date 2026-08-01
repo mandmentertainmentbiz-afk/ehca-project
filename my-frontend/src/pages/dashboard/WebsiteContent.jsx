@@ -375,12 +375,7 @@ const generateWebsiteStructure = async () => {
   onUpdated={() => loadPage(activePage)}
   onDeleted={() => loadPage(activePage)}
 />
-<div
-  {...dragHandleProps}
-  className="cursor-grab"
->
-  <GripVertical size={18} />
-</div>
+
                       </div>
 
                     )}
