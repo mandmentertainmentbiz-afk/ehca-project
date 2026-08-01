@@ -237,8 +237,8 @@ const generateWebsiteStructure = async () => {
   /* ================= LOAD WHEN PAGE CHANGES ================= */
 
   useEffect(() => {
-    await loadPage(activePage);
-  }, [activePage]);
+  loadPage(activePage);
+}, [activePage]);
 
   return (
     <div className="container-fluid py-4">
