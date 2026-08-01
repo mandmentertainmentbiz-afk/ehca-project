@@ -13,7 +13,9 @@ export default function AdminDashboard() {
   /* ================= LOAD PROJECTS ================= */
   const fetchProjects = async () => {
     try {
-      const res = await axios.get("https://ehca-project-1.onrender.com/api/projects");
+      const res = await axios.get(
+  "https://ehca-project-1.onrender.com/api/projects"
+);
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects");
@@ -38,7 +40,7 @@ const handleDelete = async (id) => {
       }
     );
 
-    // ✅ Remove instantly from UI
+     // ✅ Remove instantly from UI
     setProjects((prev) =>
       prev.filter((p) => p._id !== id)
     );
