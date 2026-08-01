@@ -66,7 +66,7 @@ export default function Navbar() {
             <motion.img
               src={logo}
               alt="logo"
-              className="h-10 md:h-20"
+              className="h-12 md:h-16"
               animate={{
                 scale: scrolled ? 0.9 : 1,
                 rotate: scrolled ? 360 : 0,
@@ -130,7 +130,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-
+         <div className="h-20 md:h-28"></div>
       {/* MOBILE MENU */}
       {menuOpen && (
         <>
