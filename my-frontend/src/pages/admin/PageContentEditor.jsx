@@ -33,7 +33,17 @@ export default function PageContentEditor() {
 
   const saveContent = async (item) => {
     try {
-      await axios.put(`${API}/page-content/${item._id}`, item);
+      const token = localStorage.getItem("token");
+
+await axios.put(
+  `${API}/page-content/${item._id}`,
+  item,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       alert("Content updated successfully.");
     } catch (err) {
