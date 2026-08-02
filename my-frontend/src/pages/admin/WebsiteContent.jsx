@@ -31,6 +31,12 @@ export default function WebsiteContent() {
   const [error, setError] =
     useState("");
 
+    const [editingSection, setEditingSection] = useState(null);
+
+const editSection = (section) => {
+  setEditingSection(section);
+};
+
   /* ===========================
      LOAD PAGE CONTENT
   =========================== */
@@ -370,28 +376,78 @@ export default function WebsiteContent() {
               />
 
               <SectionList
-                sections={sections}
-                activePage={activePage}
-                onDragEnd={handleDragEnd}
-                onMoveUp={(index) =>
-                  moveSection(
-                    index,
-                    "up"
-                  )
-                }
-                onMoveDown={(index) =>
-                  moveSection(
-                    index,
-                    "down"
-                  )
-                }
-                onUpdated={() =>
-                  loadPage(activePage)
-                }
-                onDeleted={() =>
-                  loadPage(activePage)
-                }
-              />
+  sections={sections}
+  activePage={activePage}
+  onDragEnd={handleDragEnd}
+  onMoveUp={(index) =>
+    moveSection(index, "up")
+  }
+  onMoveDown={(index) =>
+    moveSection(index, "down")
+  }
+  onEdit={editSection}
+  onUpdated={() =>
+    loadPage(activePage)
+  }
+  onDeleted={() =>
+    loadPage(activePage)
+  }
+/>
+
+
+{editingSection && (
+  <div className="card shadow mt-4 p-4">
+
+    <h4 className="mb-3">
+      Edit Section
+    </h4>
+
+    <input
+      className="form-control mb-3"
+      placeholder="Title"
+      value={editingSection.title || ""}
+      onChange={(e) =>
+        setEditingSection({
+          ...editingSection,
+          title: e.target.value,
+        })
+      }
+    />
+
+    <textarea
+      className="form-control mb-3"
+      rows="6"
+      placeholder="Content"
+      value={editingSection.content || ""}
+      onChange={(e) =>
+        setEditingSection({
+          ...editingSection,
+          content: e.target.value,
+        })
+      }
+    />
+
+    <div className="d-flex gap-2">
+
+      <button
+        className="btn btn-success"
+      >
+        Save Changes
+      </button>
+
+      <button
+        className="btn btn-secondary"
+        onClick={() =>
+          setEditingSection(null)
+        }
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+)}
             </>
           )}
 
