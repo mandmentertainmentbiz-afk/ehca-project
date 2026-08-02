@@ -3,6 +3,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
+import {
+  FolderOpen,
+  Users,
+  HeartHandshake,
+  Globe,
+} from "lucide-react";
 
 export default function AdminDashboard() {
   const [projects, setProjects] = useState([]);
@@ -105,58 +111,48 @@ const handleUpdate = async (e) => {
 
   return (
     <div className="p-10"><br></br><br></br>
-      <h1 className="text-3xl font-bold mb-6">
-        Admin Dashboard
-      </h1>
+      <div className="mb-8">
+  <h1 className="text-4xl font-bold text-gray-800">
+    Welcome back 👋
+  </h1>
+
+  <p className="text-gray-500 mt-2">
+    Manage your NGO website, members, donations and content from one place.
+  </p>
+</div>
 
       
-      <div className="grid md:grid-cols-4 gap-6 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
 
   <Link to="/admin/add">
-    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition">
-      <h2 className="text-2xl font-bold">
-        Add Projects
-      </h2>
-
-      <p className="text-gray-600">
-        Manage NGO projects
-      </p>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-blue-600">
+      <FolderOpen className="w-10 h-10 text-blue-600 mb-3" />
+      <h3 className="text-3xl font-bold">{projects.length}</h3>
+      <p className="text-gray-600">Projects</p>
     </div>
   </Link>
 
   <Link to="/admin/members">
-    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition">
-      <h2 className="text-2xl font-bold">
-        Membership Requests
-      </h2>
-
-      <p className="text-gray-600">
-        Approve members and partners
-      </p>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-green-600">
+      <Users className="w-10 h-10 text-green-600 mb-3" />
+      <h3 className="text-3xl font-bold">Members</h3>
+      <p className="text-gray-600">Manage Memberships</p>
     </div>
   </Link>
 
   <Link to="/admin/donations">
-    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition">
-      <h2 className="text-2xl font-bold">
-        Manage Donations
-      </h2>
-
-      <p className="text-gray-600">
-        View donations
-      </p>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-yellow-500">
+      <HeartHandshake className="w-10 h-10 text-yellow-500 mb-3" />
+      <h3 className="text-3xl font-bold">Donations</h3>
+      <p className="text-gray-600">View Donations</p>
     </div>
   </Link>
 
   <Link to="/admin/website-content">
-    <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition border-l-4 border-blue-600">
-      <h2 className="text-2xl font-bold">
-        🌐 Website Content
-      </h2>
-
-      <p className="text-gray-600">
-        Edit all website pages
-      </p>
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 border-l-4 border-purple-600">
+      <Globe className="w-10 h-10 text-purple-600 mb-3" />
+      <h3 className="text-3xl font-bold">Website</h3>
+      <p className="text-gray-600">Content Manager</p>
     </div>
   </Link>
 
