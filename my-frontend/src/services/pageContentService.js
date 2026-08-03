@@ -50,18 +50,21 @@ export const createPageContent = async (data) => {
 // ===============================
 // UPDATE CONTENT
 // ===============================
-export const updatePageContent = async (
-  id,
-  data
-) => {
-  const response = await api.put(
-    `/${id}`,
-    data
+export const updatePageContent = async (id, data) => {
+  const token = localStorage.getItem("token");
+
+  const res = await axios.put(
+    `${API_URL}/page-content/${id}`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
-  return response.data;
+  return res.data;
 };
-
 // ===============================
 // DELETE CONTENT
 // ===============================

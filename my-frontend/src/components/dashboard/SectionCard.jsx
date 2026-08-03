@@ -26,6 +26,7 @@ export default function SectionCard({
   dragHandleProps,
   onMoveUp,
   onMoveDown,
+  onEdit,
   onUpdated,
   onDeleted,
 }) {
@@ -167,9 +168,7 @@ export default function SectionCard({
 
               <button
                 className="btn btn-outline-primary btn-sm"
-                onClick={() =>
-                  setShowEditor(true)
-                }
+                onClick={() => onEdit(section)}
                 title="Edit Section"
               >
                 <Pencil size={16} />
@@ -366,7 +365,7 @@ export default function SectionCard({
 
       </div>
 
-      {/* ================= CONTENT EDITOR ================= */}
+      {/* ================= CONTENT EDITOR 
 
       {showEditor && (
         <ContentEditor
@@ -380,7 +379,7 @@ export default function SectionCard({
             }
           }}
         />
-      )}
+      )}   ================= */}
 
     </>
   );

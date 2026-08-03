@@ -9,6 +9,7 @@ import {
   getPageContent,
   createPageContent,
   updateSectionOrder,
+  updatePageContent,
 } from "../../services/pageContentService";
 
 import {
@@ -28,6 +29,9 @@ export default function WebsiteContent() {
     useState(false);
 
   const [error, setError] = useState("");
+
+  const [editingSection, setEditingSection] = useState(null);
+const [savingSection, setSavingSection] = useState(false);
 
   /* ================= LOAD PAGE ================= */
 
@@ -108,6 +112,34 @@ const saveSectionOrder = async () => {
     alert("Failed to save section order.");
   } finally {
     setSavingOrder(false);
+  }
+};
+
+
+const editSection = (section) => {
+  setEditingSection({ ...section });
+};
+
+const saveSection = async () => {
+  try {
+    setSavingSection(true);
+
+    await updatePageContent(
+      editingSection._id,
+      editingSection
+    );
+
+    alert("Section updated successfully.");
+
+    setEditingSection(null);
+
+    await loadPage(activePage);
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update section.");
+  } finally {
+    setSavingSection(false);
   }
 };
 
@@ -372,6 +404,7 @@ const generateWebsiteStructure = async () => {
   dragHandleProps={provided.dragHandleProps}
   onMoveUp={() => moveSection(index, "up")}
   onMoveDown={() => moveSection(index, "down")}
+  onEdit={editSection}
   onUpdated={() => loadPage(activePage)}
   onDeleted={() => loadPage(activePage)}
 />
@@ -397,6 +430,62 @@ const generateWebsiteStructure = async () => {
 
     </>
 
+)}
+
+{editingSection && (
+  <div className="card shadow mt-4 p-4">
+
+    <h4 className="mb-3">
+      Edit Section
+    </h4>
+
+    <input
+      className="form-control mb-3"
+      placeholder="Title"
+      value={editingSection.title || ""}
+      onChange={(e) =>
+        setEditingSection({
+          ...editingSection,
+          title: e.target.value,
+        })
+      }
+    />
+
+    <textarea
+      className="form-control mb-3"
+      rows="6"
+      placeholder="Content"
+      value={editingSection.content || ""}
+      onChange={(e) =>
+        setEditingSection({
+          ...editingSection,
+          content: e.target.value,
+        })
+      }
+    />
+
+    <div className="d-flex gap-2">
+
+      <button
+        className="btn btn-success"
+        onClick={saveSection}
+        disabled={savingSection}
+      >
+        {savingSection ? "Saving..." : "Save Changes"}
+      </button>
+
+      <button
+        className="btn btn-secondary"
+        onClick={() =>
+          setEditingSection(null)
+        }
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
 )}
 
 </div>
