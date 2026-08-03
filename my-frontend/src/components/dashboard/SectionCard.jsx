@@ -26,7 +26,6 @@ export default function SectionCard({
   dragHandleProps,
   onMoveUp,
   onMoveDown,
-  onEdit,
   onUpdated,
   onDeleted,
 }) {
