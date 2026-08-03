@@ -168,7 +168,9 @@ export default function SectionCard({
 
               <button
                 className="btn btn-outline-primary btn-sm"
-                onClick={() => onEdit(section)}
+                onClick={() =>
+                  setShowEditor(true)
+                }
                 title="Edit Section"
               >
                 <Pencil size={16} />
@@ -365,7 +367,7 @@ export default function SectionCard({
 
       </div>
 
-      {/* ================= CONTENT EDITOR 
+      {/* ================= CONTENT EDITOR ================= */}
 
       {showEditor && (
         <ContentEditor
@@ -379,7 +381,7 @@ export default function SectionCard({
             }
           }}
         />
-      )}   ================= */}
+      )}
 
     </>
   );
