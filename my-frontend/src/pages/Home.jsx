@@ -21,8 +21,7 @@ const HeroSlider = () => {
     "/slide/img3.jpg",
   ];
 
-  const about = useSection("home", "about");
-  const impact = useSection("home", "impact");
+
 
   const [index, setIndex] = useState(0);
 
@@ -87,6 +86,8 @@ const HeroSlider = () => {
 
 /* ================= HOME ================= */
 export default function Home() {
+  const about = useSection("home", "about");
+const impact = useSection("home", "impact");
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -525,7 +526,10 @@ export default function Home() {
         </section>  
 
       {/* ================= IMPACT ================= */}
-      
+      <DynamicSection
+        page="home"
+        section="impact"
+      />
     </div>
   );
 }
