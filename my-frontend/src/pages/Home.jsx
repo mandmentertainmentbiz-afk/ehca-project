@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import DynamicSection from "../components/DynamicSection";
 import useSection from "../hooks/useSection";
+import StatisticsSection from "../components/StatisticsSection";
 
 /* ================= API ================= */
 const API_URL = "https://ehca-project-1.onrender.com";
@@ -180,7 +181,9 @@ export default function Home() {
     <div className="font-sans text-gray-800">
       <HeroSlider />
 
-      {/* Continue with Our Projects... */}
+<StatisticsSection />
+
+{/* Continue with Our Projects... */}
       {/* ================= OUR PROJECTS ================= */}
       <section className="py-20 px-6 md:px-20 bg-gray-50">
         <h2 className="text-4xl font-bold text-center mb-4">
@@ -227,10 +230,92 @@ export default function Home() {
       </section>
 
       {/* ================= ABOUT ================= */}
-      <DynamicSection
-        page="home"
-        section="about"
-      />
+      <section className="py-24 bg-white">
+  <div className="container mx-auto px-6 md:px-20">
+
+    <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+      {/* Left Image */}
+
+      <div>
+        <img
+          src="/slide/about.PNG"
+          alt="EHCA"
+          className="rounded-3xl shadow-2xl w-full object-cover"
+        />
+      </div>
+
+      {/* Right Content */}
+
+      <div>
+
+        <span className="text-pink-500 font-semibold uppercase tracking-wider">
+          About EHCA
+        </span>
+
+        <h2 className="text-5xl font-bold mt-3 mb-6 text-blue-900">
+          Empowering Hope.
+          <br />
+          Transforming Lives.
+        </h2>
+
+        <p className="text-gray-600 leading-8 mb-8">
+          Elevate Hope & Care Association is committed to
+          improving lives through education, healthcare,
+          humanitarian outreach and community development.
+          Every programme we organize is designed to create
+          lasting impact for vulnerable individuals and
+          underserved communities.
+        </p>
+
+        <div className="grid grid-cols-2 gap-4 mb-8">
+
+          <div className="flex items-center gap-3">
+            <span className="text-pink-500 text-xl">✓</span>
+            Community Development
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-pink-500 text-xl">✓</span>
+            Healthcare Outreach
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-pink-500 text-xl">✓</span>
+            Education Support
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-pink-500 text-xl">✓</span>
+            Youth Empowerment
+          </div>
+
+        </div>
+
+        <div className="flex gap-4">
+
+          <Link
+            to="/about"
+            className="bg-blue-900 text-white px-8 py-3 rounded-xl hover:bg-blue-800 transition"
+          >
+            Read More
+          </Link>
+
+          <Link
+            to="/donate"
+            className="border-2 border-pink-500 text-pink-500 px-8 py-3 rounded-xl hover:bg-pink-500 hover:text-white transition"
+          >
+            Donate
+          </Link>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
 
       {/* ================= ONGOING PROJECTS ================= */}
       <section className="py-20 px-6 md:px-20 bg-white">
