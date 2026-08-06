@@ -22,7 +22,7 @@ const HeroSlider = () => {
   ];
 
   const about = useSection("home", "about");
-  const impact = useSection("home", "impact");
+  
 
   const [index, setIndex] = useState(0);
 
