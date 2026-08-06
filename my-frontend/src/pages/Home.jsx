@@ -525,10 +525,7 @@ export default function Home() {
         </section>  
 
       {/* ================= IMPACT ================= */}
-      <DynamicSection
-        page="home"
-        section="impact"
-      />
+      
     </div>
   );
 }
