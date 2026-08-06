@@ -21,6 +21,9 @@ const HeroSlider = () => {
     "/slide/img3.jpg",
   ];
 
+  const about = useSection("home", "about");
+  const impact = useSection("home", "impact");
+
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -239,10 +242,10 @@ export default function Home() {
 
       <div>
         <img
-          src="/slide/about.PNG"
-          alt="EHCA"
-          className="rounded-3xl shadow-2xl w-full object-cover"
-        />
+  src={about?.image || "/slide/about.PNG"}
+  alt={about?.title}
+  className="rounded-3xl shadow-2xl w-full object-cover"
+/>
       </div>
 
       {/* Right Content */}
@@ -254,19 +257,12 @@ export default function Home() {
         </span>
 
         <h2 className="text-5xl font-bold mt-3 mb-6 text-blue-900">
-          Empowering Hope.
-          <br />
-          Transforming Lives.
-        </h2>
+  {about?.title || "Empowering Hope. Transforming Lives."}
+</h2>
 
-        <p className="text-gray-600 leading-8 mb-8">
-          Elevate Hope & Care Association is committed to
-          improving lives through education, healthcare,
-          humanitarian outreach and community development.
-          Every programme we organize is designed to create
-          lasting impact for vulnerable individuals and
-          underserved communities.
-        </p>
+<p className="text-gray-600 leading-8 mb-8">
+  {about?.content || "Default About text"}
+</p>
 
         <div className="grid grid-cols-2 gap-4 mb-8">
 
@@ -295,11 +291,11 @@ export default function Home() {
         <div className="flex gap-4">
 
           <Link
-            to="/about"
-            className="bg-blue-900 text-white px-8 py-3 rounded-xl hover:bg-blue-800 transition"
-          >
-            Read More
-          </Link>
+  to={about?.buttonLink || "/about"}
+  className="bg-blue-900 text-white px-8 py-3 rounded-xl"
+>
+  {about?.buttonText || "Read More"}
+</Link>
 
           <Link
             to="/donate"
