@@ -22,6 +22,7 @@ const HeroSlider = () => {
   ];
 
   const about = useSection("home", "about");
+  const impact = useSection("home", "impact");
 
   const [index, setIndex] = useState(0);
 
@@ -290,11 +291,11 @@ export default function Home() {
         <div className="flex gap-4">
 
           <Link
-            to="/about"
-            className="bg-blue-900 text-white px-8 py-3 rounded-xl hover:bg-blue-800 transition"
-          >
-            Read More
-          </Link>
+  to={about?.buttonLink || "/about"}
+  className="bg-blue-900 text-white px-8 py-3 rounded-xl"
+>
+  {about?.buttonText || "Read More"}
+</Link>
 
           <Link
             to="/donate"
