@@ -15,7 +15,7 @@ const HeroSlider = () => {
 
   const images = [
     "/slide/banner8.png",
-    "/slide/img1.jpg",
+    "/slide/img1.jpg", b
     "/slide/img2.jpg",
     "/slide/img3.jpg",
   ];
@@ -396,6 +396,52 @@ export default function Home() {
         page="home"
         section="what-we-do"
       />
+
+      <section  
+          className="relative text-white text-center py-24 px-6 bg-cover bg-center"  
+          style={{  
+            backgroundImage:  
+              "url('/slide/smile.PNG')",  
+          }}  
+        >  
+          <div className="absolute inset-0 bg-blue-950/40" />  
+      
+          <div className="relative z-10 max-w-3xl mx-auto">  
+            <h2 className="text-5xl font-extrabold mb-6">  
+              Be the Reason a Child Smiles Today  
+            </h2>  
+      
+            <p className="text-lg text-gray-200 mb-10">  
+              Your support can transform lives and help  
+              communities grow through love, care and  
+              education.  
+            </p>  
+      
+            {nextProject && (  
+              <div className="bg-white/70000 p-8 rounded-2xl mb-8">  
+                <h3 className="text-3xl font-bold mb-3">  
+                  {nextProject.title}  
+                </h3>  
+      
+                <p className="mb-3">  
+                  {nextProject.shortDesc ||  
+                    nextProject.desc}  
+                </p>  
+      
+                <p className="text-pink-200">  
+                  Upcoming Date:{" "}  
+                  {new Date(  
+                    nextProject.date  
+                  ).toLocaleDateString()}  
+                </p>  
+              </div>  
+            )}  
+      
+            <button className="bg-pink-500 hover:bg-pink-600 px-8 py-4 rounded-xl font-bold transition">  
+              Donate Now  
+            </button>  
+          </div>  
+        </section>  
 
       {/* ================= IMPACT ================= */}
       <DynamicSection
