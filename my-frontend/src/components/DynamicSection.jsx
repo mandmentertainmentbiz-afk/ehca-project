@@ -17,77 +17,71 @@ export default function DynamicSection({
     return null;
   }
 
-  return (
-    <section className={className}>
+  return (return (
+  <section className={`py-20 bg-white ${className}`}>
+    <div className="container mx-auto px-6 lg:px-20">
 
-      {showTitle && data.title && (
-        <h2>{data.title}</h2>
-      )}
+      <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-      {showSubtitle && data.subtitle && (
-        <h5>{data.subtitle}</h5>
-      )}
+        {/* Left Image */}
 
-      {showImage && data.image && (
-        <div className="mb-4">
-          <img
-            src={data.image}
-            alt={data.title}
-            className="img-fluid rounded"
-          />
+        <div>
+          {showImage && data.image && (
+            <img
+              src={data.image}
+              alt={data.title}
+              className="w-full rounded-3xl shadow-2xl object-cover"
+            />
+          )}
         </div>
-      )}
 
-      {showContent && data.content && (
-        <p>{data.content}</p>
-      )}
+        {/* Right Content */}
 
-      {showItems &&
-        data.items &&
-        data.items.length > 0 && (
-          <div className="row">
+        <div>
 
-            {data.items.map((item, index) => (
+          {showSubtitle && (
+            <p className="uppercase text-pink-500 font-semibold tracking-wider">
+              {data.subtitle}
+            </p>
+          )}
 
-              <div
-                key={index}
-                className="col-md-4 mb-4"
-              >
+          {showTitle && (
+            <h2 className="text-5xl font-bold text-blue-900 mt-2 mb-6">
+              {data.title}
+            </h2>
+          )}
 
-                {item.image && (
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="img-fluid rounded mb-3"
-                  />
-                )}
+          {showContent && (
+            <p className="text-gray-600 leading-8 mb-8">
+              {data.content}
+            </p>
+          )}
 
-                {item.title && (
-                  <h5>{item.title}</h5>
-                )}
+          {showItems && data.items?.length > 0 && (
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {data.items.map((item, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <span className="text-pink-500">✓</span>
+                  <span>{item.title}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
-                {item.description && (
-                  <p>{item.description}</p>
-                )}
+          {showButton && data.buttonText && (
+            <a
+              href={data.buttonLink}
+              className="inline-block bg-blue-900 text-white px-8 py-3 rounded-xl hover:bg-blue-800 transition"
+            >
+              {data.buttonText}
+            </a>
+          )}
 
-              </div>
+        </div>
 
-            ))}
+      </div>
 
-          </div>
-        )}
-
-      {showButton &&
-        data.buttonText &&
-        data.buttonLink && (
-          <a
-            href={data.buttonLink}
-            className="btn btn-primary mt-3"
-          >
-            {data.buttonText}
-          </a>
-        )}
-
-    </section>
-  );
+    </div>
+  </section>
+);
 }
