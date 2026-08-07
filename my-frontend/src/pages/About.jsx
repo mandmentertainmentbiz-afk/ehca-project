@@ -3,6 +3,10 @@ import SupportMissionForm from "../components/SupportMissionForm";
 import useSection from "../hooks/useSection";
 import DynamicSection from "../components/DynamicSection";
 
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+
 export default function About() {
 
   const about = useSection("about", "about");
