@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import SupportMissionForm from "../components/SupportMissionForm";
 import useSection from "../hooks/useSection";
+import DynamicSection from "../components/DynamicSection";
 
 export default function About() {
 
