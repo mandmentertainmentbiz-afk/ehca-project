@@ -78,8 +78,8 @@ export default function About() {
               transition={{ duration: 0.7 }}
             >
               <img
-                src={about?.image || "/slide/about.PNG"}
-                alt={about?.title || "About EHCA"}
+                src={whoWeAre?.image || "/slide/about.PNG"}
+                alt={whoWeAre?.title || "About EHCA"}
                 className="rounded-3xl shadow-2xl w-full h-[500px] object-cover"
               />
             </motion.div>
@@ -94,25 +94,25 @@ export default function About() {
             >
 
               <span className="text-pink-500 font-semibold uppercase tracking-wider">
-                {about?.subtitle || "About EHCA"}
+                {whoWeAre?.subtitle || "About EHCA"}
               </span>
 
               <h2 className="text-4xl md:text-5xl font-bold mt-3 mb-6 text-blue-900">
-                {about?.title ||
+                {whoWeAre?.title ||
                   "Empowering Hope. Transforming Lives."}
               </h2>
 
               <p className="text-gray-600 leading-8 mb-8">
-                {about?.content ||
+                {whoWeAre?.content ||
                   "Elevate Hope & Care Association is committed to improving lives through education, healthcare, compassion and community development."}
               </p>
 
 
               {/* ADMIN ITEMS */}
-              {about?.items?.length > 0 && (
+              {whoWeAre?.items?.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
 
-                  {about.items.map((item, index) => (
+                  {whoWeAre.items.map((item, index) => (
                     <div
                       key={index}
                       className="flex items-center gap-3"
@@ -132,7 +132,7 @@ export default function About() {
 
 
               {/* FALLBACK HIGHLIGHTS */}
-              {!about?.items?.length && (
+              {!whoWeAre?.items?.length && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
 
                   <div className="flex items-center gap-3">
@@ -163,10 +163,10 @@ export default function About() {
               <div className="flex gap-4 flex-wrap">
 
                 <Link
-                  to={about?.buttonLink || "/contact"}
+                  to={whoWeAre?.buttonLink || "/contact"}
                   className="bg-blue-900 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-800 transition"
                 >
-                  {about?.buttonText || "Read More"}
+                  {whoWeAre?.buttonText || "Read More"}
                 </Link>
 
                 <Link
