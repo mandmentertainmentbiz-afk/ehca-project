@@ -1,12 +1,18 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-
 import SupportMissionForm from "../components/SupportMissionForm";
 import useSection from "../hooks/useSection";
+import { Link } from "react-router-dom";
 
 export default function About() {
-  // ================= DYNAMIC CONTENT =================
+  /* ================= ADMIN CONTENT ================= */
+
+  const hero = useSection("about", "hero");
   const about = useSection("about", "about");
+  const cta = useSection("about", "cta");
+  const whoWeAre = useSection("about", "who-we-are");
+  const mission = useSection("about", "mission");
+  const vision = useSection("about", "vision");
+  const coreValues = useSection("about", "core-values");
   const impact = useSection("about", "impact");
 
   return (
@@ -18,42 +24,49 @@ export default function About() {
       <section
         className="relative min-h-[70vh] flex items-center justify-center text-center bg-cover bg-center"
         style={{
-          backgroundImage: "url('/slide/banner8.png')",
+          backgroundImage: `url(${
+            hero?.image || "/slide/banner8.png"
+          })`,
         }}
       >
-        {/* Overlay */}
         <div className="absolute inset-0 bg-blue-950/70" />
 
-        {/* Content */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10 px-6 max-w-4xl"
+          transition={{ duration: 1 }}
+          className="relative z-10 px-6 max-w-4xl text-white"
         >
-          <p className="text-pink-400 font-semibold uppercase tracking-[0.25em] mb-4">
-            About EHCA
+          <p className="text-pink-300 font-semibold uppercase tracking-widest mb-4">
+            {hero?.subtitle || "Elevate Hope & Care Association"}
           </p>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6">
-            Empowering Hope.
-            <br />
-            Transforming Lives.
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6">
+            {hero?.title || "About EHCA"}
           </h1>
 
           <p className="text-lg md:text-2xl text-gray-200 leading-8">
-            Elevate Hope & Care Association is committed to transforming
-            lives through compassion, education, healthcare and community
-            support.
+            {hero?.content ||
+              "Transforming lives through compassion, education, healthcare and community support."}
           </p>
+
+          {hero?.buttonText && (
+            <Link
+              to={hero?.buttonLink || "/contact"}
+              className="inline-block mt-8 bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 rounded-xl font-semibold transition"
+            >
+              {hero.buttonText}
+            </Link>
+          )}
         </motion.div>
       </section>
 
+
       {/* =====================================================
-          WHO WE ARE / ABOUT
+          ABOUT EHCA
       ===================================================== */}
       <section className="py-24 bg-white">
-        <div className="container mx-auto px-6 lg:px-20">
+        <div className="container mx-auto px-6 md:px-20">
 
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
@@ -62,132 +75,105 @@ export default function About() {
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative"
+              transition={{ duration: 0.7 }}
             >
               <img
                 src={about?.image || "/slide/about.PNG"}
                 alt={about?.title || "About EHCA"}
-                className="w-full h-[500px] object-cover rounded-3xl shadow-2xl"
+                className="rounded-3xl shadow-2xl w-full h-[500px] object-cover"
               />
-
-              {/* Small decorative box */}
-              <div className="absolute -bottom-6 -right-6 hidden md:block bg-pink-500 text-white p-6 rounded-2xl shadow-xl">
-                <p className="text-3xl font-extrabold">EHCA</p>
-                <p className="text-sm">
-                  Serving with hope & care
-                </p>
-              </div>
             </motion.div>
+
 
             {/* CONTENT */}
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.7 }}
             >
 
-              {/* Subtitle */}
-              <p className="text-pink-500 font-semibold uppercase tracking-[0.2em] mb-3">
-                {about?.subtitle || "Who We Are"}
-              </p>
+              <span className="text-pink-500 font-semibold uppercase tracking-wider">
+                {about?.subtitle || "About EHCA"}
+              </span>
 
-              {/* Title */}
-              <h2 className="text-4xl md:text-5xl font-extrabold text-blue-900 leading-tight mb-6">
-                {about?.title || "Empowering Hope. Transforming Lives."}
+              <h2 className="text-4xl md:text-5xl font-bold mt-3 mb-6 text-blue-900">
+                {about?.title ||
+                  "Empowering Hope. Transforming Lives."}
               </h2>
 
-              {/* Content */}
-              <p className="text-gray-600 text-lg leading-8 mb-8">
+              <p className="text-gray-600 leading-8 mb-8">
                 {about?.content ||
-                  "Elevate Hope & Care Association is a non-profit organization committed to improving lives through education, healthcare, community development and humanitarian support."}
+                  "Elevate Hope & Care Association is committed to improving lives through education, healthcare, compassion and community development."}
               </p>
 
-              {/* Mission Highlights */}
-              <div className="grid sm:grid-cols-2 gap-5 mb-10">
 
-                <div className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-pink-100 text-pink-500 flex items-center justify-center font-bold">
-                    ✓
-                  </span>
+              {/* ADMIN ITEMS */}
+              {about?.items?.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
 
-                  <div>
-                    <h3 className="font-bold text-blue-900">
-                      Community Development
-                    </h3>
+                  {about.items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3"
+                    >
+                      <span className="text-pink-500 text-xl font-bold">
+                        ✓
+                      </span>
 
-                    <p className="text-sm text-gray-500">
-                      Building stronger communities.
-                    </p>
-                  </div>
+                      <span className="text-gray-700">
+                        {item.title}
+                      </span>
+                    </div>
+                  ))}
+
                 </div>
+              )}
 
-                <div className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-pink-100 text-pink-500 flex items-center justify-center font-bold">
-                    ✓
-                  </span>
 
-                  <div>
-                    <h3 className="font-bold text-blue-900">
-                      Healthcare Outreach
-                    </h3>
+              {/* FALLBACK HIGHLIGHTS */}
+              {!about?.items?.length && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
 
-                    <p className="text-sm text-gray-500">
-                      Bringing care closer to communities.
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-pink-500 text-xl">✓</span>
+                    Community Development
                   </div>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-pink-100 text-pink-500 flex items-center justify-center font-bold">
-                    ✓
-                  </span>
-
-                  <div>
-                    <h3 className="font-bold text-blue-900">
-                      Education Support
-                    </h3>
-
-                    <p className="text-sm text-gray-500">
-                      Creating opportunities for children.
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-pink-500 text-xl">✓</span>
+                    Healthcare Outreach
                   </div>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-pink-100 text-pink-500 flex items-center justify-center font-bold">
-                    ✓
-                  </span>
-
-                  <div>
-                    <h3 className="font-bold text-blue-900">
-                      Youth Empowerment
-                    </h3>
-
-                    <p className="text-sm text-gray-500">
-                      Helping young people build better futures.
-                    </p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-pink-500 text-xl">✓</span>
+                    Education Support
                   </div>
+
+                  <div className="flex items-center gap-3">
+                    <span className="text-pink-500 text-xl">✓</span>
+                    Youth Empowerment
+                  </div>
+
                 </div>
+              )}
 
-              </div>
 
-              {/* Buttons */}
-              <div className="flex flex-wrap gap-4">
+              {/* BUTTON */}
+              <div className="flex gap-4 flex-wrap">
 
                 <Link
-                  to={about?.buttonLink || "/about"}
-                  className="inline-flex items-center justify-center bg-blue-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-800 transition shadow-lg"
+                  to={about?.buttonLink || "/contact"}
+                  className="bg-blue-900 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-800 transition"
                 >
                   {about?.buttonText || "Read More"}
                 </Link>
 
                 <Link
                   to="/donate"
-                  className="inline-flex items-center justify-center border-2 border-pink-500 text-pink-500 px-8 py-4 rounded-xl font-semibold hover:bg-pink-500 hover:text-white transition"
+                  className="border-2 border-pink-500 text-pink-500 px-8 py-3 rounded-xl font-semibold hover:bg-pink-500 hover:text-white transition"
                 >
-                  Support Our Mission
+                  Donate
                 </Link>
 
               </div>
@@ -195,283 +181,283 @@ export default function About() {
             </motion.div>
 
           </div>
+
         </div>
       </section>
+
+
+      {/* =====================================================
+          WHO WE ARE
+      ===================================================== */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-6 md:px-20">
+
+          <div className="max-w-4xl mx-auto text-center">
+
+            <span className="text-pink-500 font-semibold uppercase tracking-wider">
+              {whoWeAre?.subtitle || "Who We Are"}
+            </span>
+
+            <h2 className="text-4xl font-bold text-blue-900 mt-3 mb-6">
+              {whoWeAre?.title || "Serving Communities With Purpose"}
+            </h2>
+
+            <p className="text-gray-600 leading-8 text-lg">
+              {whoWeAre?.content ||
+                "We work alongside communities to provide practical support, create opportunities and build a better future for children and vulnerable families."}
+            </p>
+
+          </div>
+
+        </div>
+      </section>
+
 
       {/* =====================================================
           MISSION & VISION
       ===================================================== */}
-      <section className="py-24 bg-gray-50">
-        <div className="container mx-auto px-6 lg:px-20">
+      <section className="py-20 px-6 md:px-20 bg-white">
 
-          <div className="text-center max-w-3xl mx-auto mb-14">
+        <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
 
-            <p className="text-pink-500 font-semibold uppercase tracking-[0.2em] mb-3">
-              Our Purpose
+          {/* MISSION */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="bg-gray-50 p-10 rounded-3xl shadow-lg"
+          >
+            <span className="text-pink-500 font-semibold uppercase">
+              {mission?.subtitle || "Our Mission"}
+            </span>
+
+            <h3 className="text-3xl font-bold mt-3 mb-6 text-blue-900">
+              {mission?.title || "Our Mission"}
+            </h3>
+
+            <p className="text-gray-600 leading-8">
+              {mission?.content ||
+                "To uplift communities through education, healthcare, emotional support and humanitarian outreach programs that create lasting impact."}
             </p>
+          </motion.div>
 
-            <h2 className="text-4xl md:text-5xl font-extrabold text-blue-900">
-              What Drives Us
-            </h2>
 
-          </div>
+          {/* VISION */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="bg-blue-900 p-10 rounded-3xl shadow-lg text-white"
+          >
+            <span className="text-pink-300 font-semibold uppercase">
+              {vision?.subtitle || "Our Vision"}
+            </span>
 
-          <div className="grid md:grid-cols-2 gap-10">
+            <h3 className="text-3xl font-bold mt-3 mb-6">
+              {vision?.title || "Our Vision"}
+            </h3>
 
-            {/* MISSION */}
-            <motion.div
-              whileHover={{ y: -8 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white p-10 md:p-12 rounded-3xl shadow-lg border-t-4 border-blue-900"
-            >
-              <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-2xl">🎯</span>
-              </div>
+            <p className="text-blue-100 leading-8">
+              {vision?.content ||
+                "A world where every child and community has access to care, hope, dignity and opportunities for a better future."}
+            </p>
+          </motion.div>
 
-              <h3 className="text-3xl font-bold mb-5 text-blue-900">
-                Our Mission
-              </h3>
-
-              <p className="text-gray-600 text-lg leading-8">
-                To uplift communities through education, healthcare,
-                emotional support and humanitarian outreach programs
-                that create lasting impact.
-              </p>
-            </motion.div>
-
-            {/* VISION */}
-            <motion.div
-              whileHover={{ y: -8 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white p-10 md:p-12 rounded-3xl shadow-lg border-t-4 border-pink-500"
-            >
-              <div className="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-2xl">🌍</span>
-              </div>
-
-              <h3 className="text-3xl font-bold mb-5 text-pink-500">
-                Our Vision
-              </h3>
-
-              <p className="text-gray-600 text-lg leading-8">
-                A world where every child and community has access
-                to care, hope, dignity and opportunities for a better
-                future.
-              </p>
-            </motion.div>
-
-          </div>
         </div>
+
       </section>
+
 
       {/* =====================================================
           CORE VALUES
       ===================================================== */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-6 lg:px-20">
+      <section className="py-20 px-6 md:px-20 bg-gray-50">
 
-          <div className="text-center max-w-3xl mx-auto mb-14">
+        <div className="max-w-6xl mx-auto">
 
-            <p className="text-pink-500 font-semibold uppercase tracking-[0.2em] mb-3">
-              What We Believe
-            </p>
+          <div className="text-center mb-14">
 
-            <h2 className="text-4xl md:text-5xl font-extrabold text-blue-900">
-              Our Core Values
+            <span className="text-pink-500 font-semibold uppercase tracking-wider">
+              {coreValues?.subtitle || "What Guides Us"}
+            </span>
+
+            <h2 className="text-4xl font-bold text-blue-900 mt-3">
+              {coreValues?.title || "Our Core Values"}
             </h2>
 
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-
-            {[
-              {
-                title: "Compassion",
-                desc: "We serve with love, empathy and genuine care.",
-                icon: "❤️",
-              },
-              {
-                title: "Integrity",
-                desc: "We uphold honesty, accountability and transparency.",
-                icon: "🤝",
-              },
-              {
-                title: "Empowerment",
-                desc: "We help individuals and communities become stronger.",
-                icon: "💪",
-              },
-              {
-                title: "Hope",
-                desc: "We inspire brighter and more sustainable futures.",
-                icon: "🌱",
-              },
-            ].map((item, index) => (
-
-              <motion.div
-                key={index}
-                whileHover={{ y: -8 }}
-                className="bg-gray-50 p-8 rounded-3xl text-center shadow-md hover:shadow-xl transition"
-              >
-
-                <div className="text-4xl mb-5">
-                  {item.icon}
-                </div>
-
-                <h3 className="text-2xl font-bold mb-4 text-blue-900">
-                  {item.title}
-                </h3>
-
-                <p className="text-gray-600 leading-7">
-                  {item.desc}
-                </p>
-
-              </motion.div>
-
-            ))}
+            {coreValues?.content && (
+              <p className="text-gray-600 max-w-2xl mx-auto mt-4">
+                {coreValues.content}
+              </p>
+            )}
 
           </div>
+
+
+          {coreValues?.items?.length > 0 ? (
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+              {coreValues.items.map((item, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ y: -5 }}
+                  className="bg-white p-8 rounded-2xl shadow-lg text-center"
+                >
+
+                  <h3 className="text-2xl font-bold mb-4 text-blue-900">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-gray-600">
+                    {item.description || item.content}
+                  </p>
+
+                </motion.div>
+              ))}
+
+            </div>
+
+          ) : (
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+              {[
+                {
+                  title: "Compassion",
+                  desc: "We serve with love and empathy.",
+                },
+                {
+                  title: "Integrity",
+                  desc: "We uphold honesty and transparency.",
+                },
+                {
+                  title: "Empowerment",
+                  desc: "We help communities become stronger.",
+                },
+                {
+                  title: "Hope",
+                  desc: "We inspire brighter futures.",
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  whileHover={{ y: -5 }}
+                  className="bg-white p-8 rounded-2xl shadow-lg text-center"
+                >
+
+                  <h3 className="text-2xl font-bold mb-4 text-blue-900">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-gray-600">
+                    {item.desc}
+                  </p>
+
+                </motion.div>
+              ))}
+
+            </div>
+
+          )}
+
         </div>
+
       </section>
+
 
       {/* =====================================================
           IMPACT
       ===================================================== */}
-      <section className="relative py-24 bg-blue-950 text-white overflow-hidden">
+      <section className="py-24 bg-blue-950 text-white">
 
-        {/* Background decoration */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute -top-20 -left-20 w-72 h-72 bg-pink-500 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl" />
-        </div>
+        <div className="max-w-6xl mx-auto px-6 md:px-20">
 
-        <div className="relative z-10 container mx-auto px-6 lg:px-20">
+          <div className="text-center mb-14">
 
-          <div className="text-center max-w-3xl mx-auto mb-14">
-
-            <p className="text-pink-400 font-semibold uppercase tracking-[0.2em] mb-3">
+            <span className="text-pink-300 font-semibold uppercase tracking-wider">
               {impact?.subtitle || "Our Impact"}
-            </p>
+            </span>
 
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-5">
-              {impact?.title || "Making a Difference"}
+            <h2 className="text-4xl md:text-5xl font-bold mt-3">
+              {impact?.title || "Making A Difference"}
             </h2>
 
             {impact?.content && (
-              <p className="text-blue-100 text-lg leading-8">
+              <p className="text-blue-100 max-w-2xl mx-auto mt-4">
                 {impact.content}
               </p>
             )}
 
           </div>
 
-          {/* Dynamic Impact Items */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            {impact?.items?.length > 0 ? (
+          {impact?.items?.length > 0 && (
 
-              impact.items.map((item, index) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
+              {impact.items.map((item, index) => (
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.04 }}
-                  className="bg-white/10 backdrop-blur-md border border-white/10 p-8 rounded-3xl text-center"
+                  className="bg-white/10 backdrop-blur-md p-8 rounded-3xl text-center border border-white/10"
                 >
 
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-yellow-400 mb-4">
+                  <h3 className="text-5xl font-extrabold mb-3 text-yellow-400">
                     {item.title}
                   </h3>
 
-                  <p className="text-blue-100">
-                    {item.description}
+                  <p className="text-lg text-blue-100">
+                    {item.description || item.content}
                   </p>
 
                 </motion.div>
+              ))}
 
-              ))
+            </div>
 
-            ) : (
-
-              <>
-                <motion.div
-                  whileHover={{ scale: 1.04 }}
-                  className="bg-white/10 backdrop-blur-md p-8 rounded-3xl text-center"
-                >
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-yellow-400 mb-4">
-                    500+
-                  </h3>
-                  <p className="text-blue-100">
-                    Children Supported
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.04 }}
-                  className="bg-white/10 backdrop-blur-md p-8 rounded-3xl text-center"
-                >
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-yellow-400 mb-4">
-                    20+
-                  </h3>
-                  <p className="text-blue-100">
-                    Communities Reached
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.04 }}
-                  className="bg-white/10 backdrop-blur-md p-8 rounded-3xl text-center"
-                >
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-yellow-400 mb-4">
-                    200+
-                  </h3>
-                  <p className="text-blue-100">
-                    Healthcare Outreach
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  whileHover={{ scale: 1.04 }}
-                  className="bg-white/10 backdrop-blur-md p-8 rounded-3xl text-center"
-                >
-                  <h3 className="text-4xl md:text-5xl font-extrabold text-yellow-400 mb-4">
-                    1,000+
-                  </h3>
-                  <p className="text-blue-100">
-                    Children Supported
-                  </p>
-                </motion.div>
-              </>
-
-            )}
-
-          </div>
+          )}
 
         </div>
+
       </section>
+
 
       {/* =====================================================
           CTA
       ===================================================== */}
-      <section className="relative py-24 px-6 bg-gray-50 overflow-hidden">
+      <section className="py-24 px-6 bg-gray-50 text-center">
 
-        <div className="container mx-auto text-center">
+        <div className="max-w-4xl mx-auto">
 
-          <p className="text-pink-500 font-semibold uppercase tracking-[0.2em] mb-4">
-            Get Involved
-          </p>
+          <span className="text-pink-500 font-semibold uppercase">
+            {cta?.subtitle || "Get Involved"}
+          </span>
 
-          <h2 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-6">
-            Join Us in Making a Difference
+          <h2 className="text-4xl md:text-5xl font-extrabold text-blue-900 mt-3 mb-6">
+            {cta?.title || "Join Us in Making a Difference"}
           </h2>
 
-          <p className="text-gray-600 max-w-3xl mx-auto mb-12 text-lg leading-8">
-            Together we can transform lives and create hope for
-            children, families and communities in need.
+          <p className="text-gray-600 max-w-3xl mx-auto mb-10 text-lg leading-8">
+            {cta?.content ||
+              "Together we can transform lives and create hope for children and communities in need."}
           </p>
 
-          {/* FORM */}
-          <div className="max-w-4xl mx-auto">
-            <SupportMissionForm />
+          <div className="flex justify-center gap-4 mb-12 flex-wrap">
+
+            <Link
+              to={cta?.buttonLink || "/donate"}
+              className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 rounded-xl font-bold transition"
+            >
+              {cta?.buttonText || "Support Our Mission"}
+            </Link>
+
+            <Link
+              to="/contact"
+              className="border-2 border-blue-900 text-blue-900 px-8 py-4 rounded-xl font-bold hover:bg-blue-900 hover:text-white transition"
+            >
+              Contact Us
+            </Link>
+
           </div>
+
+          <SupportMissionForm />
 
         </div>
 
