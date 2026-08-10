@@ -175,9 +175,21 @@ const impact = useSection("home", "impact");
   /* ================= LOADING ================= */
   if (loading) {
     return (
-      <div className="h-screen flex justify-center items-center text-2xl font-bold">
-        Loading...
-      </div>
+      
+      
+<div className="grid lg:grid-cols-2 gap-16 items-center">
+
+          {/* showing logo as loading */}
+          <div>
+      
+      <img
+        src="/slide/loadingimg.jpeg"
+        alt="EHCA"
+        className="w-32 h-auto animate-pulse"
+      />
+           
+          </div>
+          </div>
     );
   }
 
