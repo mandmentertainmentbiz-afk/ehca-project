@@ -439,27 +439,13 @@ export default function About() {
               "Together we can transform lives and create hope for children and communities in need."}
           </p>
 
-          <div className="flex justify-center gap-4 mb-12 flex-wrap">
-
-            <Link
-              to={cta?.buttonLink || "/donate"}
-              className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 rounded-xl font-bold transition"
-            >
-              {cta?.buttonText || "Support Our Mission"}
-            </Link>
-
-            <Link
-              to="/contact"
-              className="border-2 border-blue-900 text-blue-900 px-8 py-4 rounded-xl font-bold hover:bg-blue-900 hover:text-white transition"
-            >
-              Contact Us
-            </Link>
+         
 
           
 
           <SupportMissionForm />
 
-        </div>
+       
         </div>
 
       </section>
