@@ -119,7 +119,14 @@ export default function SupportMissionForm() {
 
       {/* ================= BUTTON ================= */}
       {!showForm && (
-        
+        <div className="text-center">
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition shadow-lg"
+          >
+            Join Our Mission
+          </button>
+        </div>
       )}
 
       {/* ================= FORM ================= */}
