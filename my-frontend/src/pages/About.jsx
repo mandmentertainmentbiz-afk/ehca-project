@@ -455,10 +455,11 @@ export default function About() {
               Contact Us
             </Link>
 
-          </div>
+          
 
           <SupportMissionForm />
 
+        </div>
         </div>
 
       </section>
