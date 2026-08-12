@@ -174,24 +174,20 @@ const impact = useSection("home", "impact");
 
   /* ================= LOADING ================= */
   if (loading) {
-    return (
-      
-      
-<div className="grid lg:grid-cols-2 gap-16 items-center">
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
 
-          {/* showing logo as loading */}
-          <div>
-      
       <img
         src="/slide/loadingimg.jpeg"
         alt="EHCA"
-        className="w-32 h-auto animate-pulse"
+        className="w-40 h-auto animate-pulse mb-6"
       />
-           
-          </div>
-          </div>
-    );
-  }
+
+      <div className="w-10 h-10 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin" />
+
+    </div>
+  );
+}
 
   return (
     <div className="font-sans text-gray-800">
