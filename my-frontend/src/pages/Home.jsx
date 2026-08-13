@@ -534,10 +534,8 @@ const impact = useSection("home", "impact");
         </section>  
 
       {/* ================= IMPACT ================= */}
-      <DynamicSection
-        page="home"
-        section="impact"
-      />
+      <StatisticsSection />
+      
     </div>
   );
 }
