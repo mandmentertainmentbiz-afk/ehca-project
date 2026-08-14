@@ -84,6 +84,14 @@ export default function StatisticsSection() {
 
   return (
     <section className="bg-white py-16 -mt-12 relative z-20">
+  <div className="container mx-auto px-6">
+
+    {/* OUR IMPACT TITLE */}
+    <h2 className="text-4xl md:text-5xl font-bold text-blue-900 text-center mb-12">
+      Our Impact
+    </h2>
+
+    <div className="grid md:grid-cols-4 gap-6">
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-6">
 
