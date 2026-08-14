@@ -193,6 +193,8 @@ const impact = useSection("home", "impact");
     <div className="font-sans text-gray-800">
       <HeroSlider />
 
+<StatisticsSection />
+
 {/* Continue with Our Projects... */}
       {/* ================= OUR PROJECTS ================= */}
       <section className="py-20 px-6 md:px-20 bg-gray-50">
@@ -533,7 +535,7 @@ const impact = useSection("home", "impact");
 
       {/* ================= IMPACT ================= */}
       <StatisticsSection />
-
+      
     </div>
   );
 }
