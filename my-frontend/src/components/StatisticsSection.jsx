@@ -88,12 +88,12 @@ export default function StatisticsSection() {
 
     {/* OUR IMPACT TITLE */}
     <h2 className="text-4xl md:text-5xl font-bold text-blue-900 text-center mb-12">
-      Our Impact
-    </h2>
+  {impact?.title || "Our Impact"}
+</h2>
+
+       {/* STATISTICS */}
 
     <div className="grid md:grid-cols-4 gap-6">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-6">
 
           {stats.map((item, index) => {
             /*
