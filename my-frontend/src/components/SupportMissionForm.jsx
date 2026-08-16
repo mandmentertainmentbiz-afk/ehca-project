@@ -75,16 +75,14 @@ export default function SupportMissionForm() {
       console.log("📤 SUBMITTING:", payload);
 
       const res = await axios.post(
-        `${API_URL}/api/members`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          withCredentials: true,
-        }
-      );
+  `${API_URL}/members`,
+  payload,
+  {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }
+);
 
       console.log("✅ SUCCESS:", res.data);
 
