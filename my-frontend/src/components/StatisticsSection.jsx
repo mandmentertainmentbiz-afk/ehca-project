@@ -28,10 +28,19 @@ const iconMap = {
 /* ================= COMPONENT ================= */
 
 export default function StatisticsSection() {
+  /*
+   * Get Impact section from admin/database
+   *
+   * Example:
+   * page = home
+   * section = impact
+   */
   const impact = useSection("home", "impact");
 
-  /* ================= DEFAULT CONTENT ================= */
-
+  /*
+   * Fallback content.
+   * This is used only if the database has no impact data.
+   */
   const fallbackStats = [
     {
       icon: "users",
@@ -56,8 +65,17 @@ export default function StatisticsSection() {
   ];
 
   /*
-   * Keep the design fixed.
-   * Only the content comes from the admin.
+   * Get items from database.
+   *
+   * Your admin Impact section should contain:
+   *
+   * items: [
+   *   {
+   *     title: "Lives Impacted",
+   *     description: "5,000+",
+   *     icon: "users"
+   *   }
+   * ]
    */
   const stats =
     impact?.items && impact.items.length > 0
@@ -66,17 +84,39 @@ export default function StatisticsSection() {
 
   return (
     <section className="bg-white py-16 -mt-12 relative z-20">
-      <div className="container mx-auto px-6">
+  <div className="container mx-auto px-6">
 
-        {/* ================= STATISTICS ================= */}
+    {/* OUR IMPACT TITLE */}
+    <h2 className="text-4xl md:text-5xl font-bold text-blue-900 text-center mb-12">
+  {impact?.title || "Our Impact"}
+</h2>
 
-        <div className="grid md:grid-cols-4 gap-6">
+       {/* STATISTICS */}
+    <div className="grid md:grid-cols-4 gap-6">
 
           {stats.map((item, index) => {
-
+            /*
+             * Get icon from database.
+             *
+             * If admin enters:
+             * icon: "users"
+             *
+             * it will use FaUsers.
+             */
             const Icon =
               iconMap[item.icon?.toLowerCase()] || FaUsers;
 
+            /*
+             * Support both:
+             *
+             * number
+             *
+             * OR
+             *
+             * description
+             *
+             * depending on how your existing database is structured.
+             */
             const number =
               item.number ||
               item.description ||
@@ -94,21 +134,23 @@ export default function StatisticsSection() {
                   y: -8,
                   scale: 1.03,
                 }}
-                transition={{ duration: 0.2 }}
+                transition={{
+                  duration: 0.2,
+                }}
                 className="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100"
               >
 
-                {/* ICON — DESIGN STAYS FIXED */}
+                {/* ICON */}
                 <div className="text-pink-500 flex justify-center mb-4">
                   <Icon size={35} />
                 </div>
 
-                {/* NUMBER — ADMIN EDITABLE */}
+                {/* NUMBER */}
                 <h2 className="text-4xl font-bold text-blue-900">
                   {number}
                 </h2>
 
-                {/* TITLE — ADMIN EDITABLE */}
+                {/* TITLE */}
                 <p className="mt-3 text-gray-600 font-medium">
                   {title}
                 </p>
