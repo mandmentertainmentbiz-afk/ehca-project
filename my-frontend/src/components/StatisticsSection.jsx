@@ -4,113 +4,196 @@ import {
   FaHandsHelping,
   FaHeartbeat,
   FaGraduationCap,
-  FaGlobe,
-  FaChild,
-  FaHeart,
-  FaSchool,
 } from "react-icons/fa";
 
 import useSection from "../hooks/useSection";
 
-/* ================= ICONS ================= */
+/* =========================================================
+   FIXED IMPACT DESIGN
+   The icons and number of cards stay fixed.
+   Only the content can come from the admin/database.
+========================================================= */
 
-const iconMap = {
-  users: FaUsers,
-  communities: FaHandsHelping,
-  healthcare: FaHeartbeat,
-  education: FaGraduationCap,
-  globe: FaGlobe,
-  children: FaChild,
-  heart: FaHeart,
-  school: FaSchool,
-};
+const fixedCards = [
+  {
+    icon: FaUsers,
+    defaultNumber: "5,000+",
+    defaultTitle: "Lives Impacted",
+  },
+  {
+    icon: FaHandsHelping,
+    defaultNumber: "50+",
+    defaultTitle: "Communities Reached",
+  },
+  {
+    icon: FaHeartbeat,
+    defaultNumber: "200+",
+    defaultTitle: "Healthcare Outreach",
+  },
+  {
+    icon: FaGraduationCap,
+    defaultNumber: "1,000+",
+    defaultTitle: "Children Supported",
+  },
+];
 
-/* ================= COMPONENT ================= */
+/* =========================================================
+   COMPONENT
+========================================================= */
 
 export default function StatisticsSection() {
+  /*
+   * Get the Impact section from the admin/database.
+   *
+   * Expected:
+   *
+   * page: home
+   * section: impact
+   *
+   * Example database data:
+   *
+   * {
+   *   title: "Our Impact",
+   *   items: [
+   *     {
+   *       number: "50,000+",
+   *       title: "Lives Impacted"
+   *     },
+   *     {
+   *       number: "10,000+",
+   *       title: "Communities Reached"
+   *     },
+   *     {
+   *       number: "200+",
+   *       title: "Healthcare Outreach"
+   *     },
+   *     {
+   *       number: "1,000+",
+   *       title: "Children Supported"
+   *     }
+   *   ]
+   * }
+   */
+
   const impact = useSection("home", "impact");
 
-  /* ================= DEFAULT CONTENT ================= */
+  /* =========================================================
+     MERGE DATABASE CONTENT WITH FIXED DESIGN
+     
+     IMPORTANT:
+     We always create exactly FOUR cards.
 
-  const fallbackStats = [
-    {
-      icon: "users",
-      number: "5,000+",
-      title: "Lives Impacted",
-    },
-    {
-      icon: "communities",
-      number: "50+",
-      title: "Communities Reached",
-    },
-    {
-      icon: "healthcare",
-      number: "200+",
-      title: "Healthcare Outreach",
-    },
-    {
-      icon: "education",
-      number: "1,000+",
-      title: "Children Supported",
-    },
-  ];
+     If the database contains only one item, the other
+     three cards will still appear using their default values.
+  ========================================================= */
 
-  /*
-   * Keep the design fixed.
-   * Only the content comes from the admin.
-   */
-  const stats =
-    impact?.items && impact.items.length > 0
-      ? impact.items
-      : fallbackStats;
+  const cards = fixedCards.map((card, index) => {
+    const adminItem = impact?.items?.[index];
+
+    return {
+      ...card,
+
+      /*
+       * Admin can change the number.
+       * If no value exists, use the default.
+       */
+      number:
+        adminItem?.number ??
+        adminItem?.description ??
+        card.defaultNumber,
+
+      /*
+       * Admin can change the title.
+       * If no value exists, use the default.
+       */
+      title:
+        adminItem?.title ??
+        adminItem?.label ??
+        card.defaultTitle,
+    };
+  });
 
   return (
     <section className="bg-white py-16 -mt-12 relative z-20">
       <div className="container mx-auto px-6">
 
-        {/* ================= STATISTICS ================= */}
+        {/* =================================================
+            OUR IMPACT TITLE
+        ================================================= */}
 
-        <div className="grid md:grid-cols-4 gap-6">
+        <h2 className="text-4xl md:text-5xl font-bold text-blue-900 text-center mb-12">
+          {impact?.title || "Our Impact"}
+        </h2>
 
-          {stats.map((item, index) => {
+        {/* =================================================
+            IMPACT CARDS
+        ================================================= */}
 
-            const Icon =
-              iconMap[item.icon?.toLowerCase()] || FaUsers;
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 
-            const number =
-              item.number ||
-              item.description ||
-              "";
-
-            const title =
-              item.title ||
-              item.label ||
-              "";
+          {cards.map((item, index) => {
+            const Icon = item.icon;
 
             return (
               <motion.div
-                key={item._id || index}
+                key={index}
+                initial={{
+                  opacity: 0,
+                  y: 30,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                viewport={{
+                  once: true,
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1,
+                }}
                 whileHover={{
                   y: -8,
                   scale: 1.03,
                 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100"
+                className="
+                  bg-white
+                  rounded-2xl
+                  shadow-xl
+                  p-8
+                  text-center
+                  border
+                  border-gray-100
+                  transition-shadow
+                  hover:shadow-2xl
+                "
               >
 
-                {/* ICON — DESIGN STAYS FIXED */}
+                {/* =================================================
+                    FIXED ICON
+
+                    Admin cannot change this.
+                    Each card always keeps its original icon.
+                ================================================= */}
+
                 <div className="text-pink-500 flex justify-center mb-4">
                   <Icon size={35} />
                 </div>
 
-                {/* NUMBER — ADMIN EDITABLE */}
+                {/* =================================================
+                    ADMIN EDITABLE NUMBER
+                ================================================= */}
+
                 <h2 className="text-4xl font-bold text-blue-900">
-                  {number}
+                  {item.number}
                 </h2>
 
-                {/* TITLE — ADMIN EDITABLE */}
+                {/* =================================================
+                    ADMIN EDITABLE TITLE
+                ================================================= */}
+
                 <p className="mt-3 text-gray-600 font-medium">
-                  {title}
+                  {item.title}
                 </p>
 
               </motion.div>
