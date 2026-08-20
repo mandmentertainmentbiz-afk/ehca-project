@@ -104,7 +104,7 @@ export default function Donate() {
       console.log("SENDING DONATION:", payload);
 
       const response = await fetch(
-        `${API_URL}/api/donations`,
+        `${API_URL}/donations`,
         {
           method: "POST",
           headers: {
