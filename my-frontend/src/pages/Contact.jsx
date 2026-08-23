@@ -37,24 +37,17 @@ export default function Contact() {
   /* ================= SUBMIT ================= */
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      /*
-       * CONNECT THIS TO YOUR BACKEND WHEN READY
-       *
-       * Example:
-       *
-       * await axios.post(
-       *   "https://ehca-project-1.onrender.com/api/contact",
-       *   form
-       * );
-       */
+    const response = await axios.post(
+      "https://ehca-project-1.onrender.com/api/contact",
+      form
+    );
 
-      console.log("Contact form:", form);
-
+    if (response.data.success) {
       alert("Message sent successfully");
 
       setForm({
@@ -64,13 +57,20 @@ export default function Contact() {
         subject: "",
         message: "",
       });
-    } catch (error) {
-      console.error("Contact form error:", error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
     }
-  };
+
+  } catch (error) {
+    console.error("Contact form error:", error);
+
+    alert(
+      error.response?.data?.message ||
+      "Something went wrong. Please try again."
+    );
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ================= FALLBACK DATA ================= */
 

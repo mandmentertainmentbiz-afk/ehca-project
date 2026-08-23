@@ -10,6 +10,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import donationRoutes from "./routes/donationRoutes.js";
 import pageContentRoutes from "./routes/pageContentRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 /* ================= LOAD ENV ================= */
 dotenv.config();
@@ -117,6 +118,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/donations", donationRoutes);
+app.use("/api/contact", contactRoutes);
+
 
 /* ================= 404 HANDLER ================= */
 app.use((req, res) => {
