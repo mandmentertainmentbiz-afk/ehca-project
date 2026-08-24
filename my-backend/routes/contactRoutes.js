@@ -31,12 +31,12 @@ router.post("/", async (req, res) => {
     }
 
     await transporter.sendMail({
-      from: `"EHCA Website" <${process.env.SMTP_USER}>`,
-      to: "contact@elevatecharity.org",
-      replyTo: email,
-      subject: subject?.trim() || "New Contact Form Message",
+  from: `"EHCA Website" <${process.env.SMTP_USER}>`,
+  to: process.env.CONTACT_EMAIL,
+  replyTo: email,
+  subject: subject?.trim() || "New Contact Form Message",
 
-      text: `
+  text: `
 New message from EHCA website
 
 Name: ${name}
@@ -47,22 +47,22 @@ Subject: ${subject || "No subject"}
 
 Message:
 ${message}
-      `,
+  `,
 
-      html: `
-        <h2>New Contact Form Message</h2>
+  html: `
+    <h2>New Contact Form Message</h2>
 
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
-        <p><strong>Subject:</strong> ${subject || "No subject"}</p>
+    <p><strong>Name:</strong> ${name}</p>
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Phone:</strong> ${phone || "Not provided"}</p>
+    <p><strong>Subject:</strong> ${subject || "No subject"}</p>
 
-        <hr />
+    <hr />
 
-        <h3>Message</h3>
-        <p>${message.replace(/\n/g, "<br>")}</p>
-      `,
-    });
+    <h3>Message</h3>
+    <p>${message.replace(/\n/g, "<br>")}</p>
+  `,
+});
 
     res.status(200).json({
       success: true,
