@@ -2,4 +2,5 @@
 .env
 dist/
 build/
-*.log
+*.logmy-backend/.env
+my-backend/.env
