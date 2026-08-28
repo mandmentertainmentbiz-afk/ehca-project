@@ -4,3 +4,4 @@ dist/
 build/
 *.logmy-backend/.env
 my-backend/.env
+my-backend/public/uploads/
