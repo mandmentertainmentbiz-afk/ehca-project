@@ -43,12 +43,12 @@ export default function Contact() {
     setLoading(true);
 
     const response = await axios.post(
-      "https://ehca-project-1.onrender.com/api/contact",
+      `${import.meta.env.VITE_API_URL}/api/contact`,
       form
     );
 
     if (response.data.success) {
-      alert("Message sent successfully");
+      alert("Message sent successfully!");
 
       setForm({
         name: "",
@@ -58,15 +58,13 @@ export default function Contact() {
         message: "",
       });
     }
-
   } catch (error) {
     console.error("Contact form error:", error);
 
     alert(
       error.response?.data?.message ||
-      "Something went wrong. Please try again."
+        "Something went wrong. Please try again."
     );
-
   } finally {
     setLoading(false);
   }

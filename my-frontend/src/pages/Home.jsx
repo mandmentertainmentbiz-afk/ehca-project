@@ -193,7 +193,6 @@ const impact = useSection("home", "impact");
     <div className="font-sans text-gray-800">
       <HeroSlider />
 
-<StatisticsSection />
 
 {/* Continue with Our Projects... */}
       {/* ================= OUR PROJECTS ================= */}

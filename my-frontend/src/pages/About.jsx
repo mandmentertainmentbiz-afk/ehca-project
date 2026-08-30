@@ -3,7 +3,48 @@ import SupportMissionForm from "../components/SupportMissionForm";
 import useSection from "../hooks/useSection";
 import { Link } from "react-router-dom";
 
+import {
+  FaUsers,
+  FaHandsHelping,
+  FaHeartbeat,
+  FaGraduationCap,
+} from "react-icons/fa";
+
+
+/* =========================================================
+   FIXED IMPACT CARDS
+========================================================= */
+
+const fixedCards = [
+  {
+    icon: FaUsers,
+    defaultNumber: "5,000+",
+    defaultTitle: "Lives Impacted",
+  },
+  {
+    icon: FaHandsHelping,
+    defaultNumber: "50+",
+    defaultTitle: "Communities Reached",
+  },
+  {
+    icon: FaHeartbeat,
+    defaultNumber: "200+",
+    defaultTitle: "Healthcare Outreach",
+  },
+  {
+    icon: FaGraduationCap,
+    defaultNumber: "1,000+",
+    defaultTitle: "Children Supported",
+  },
+];
+
+
+/* =========================================================
+   ABOUT PAGE
+========================================================= */
+
 export default function About() {
+
   /* ================= ADMIN CONTENT ================= */
 
   const hero = useSection("about", "hero");
@@ -13,7 +54,42 @@ export default function About() {
   const mission = useSection("about", "mission");
   const vision = useSection("about", "vision");
   const coreValues = useSection("about", "core-values");
+
+  /*
+   * Use the ABOUT impact section here.
+   *
+   * If you want this page to use the HOME impact
+   * section instead, change "about" to "home".
+   */
   const impact = useSection("about", "impact");
+
+
+  /* =========================================================
+     CREATE THE FOUR FIXED CARDS
+     
+     The design remains fixed.
+     Admin/database controls the numbers and titles.
+  ========================================================= */
+
+  const cards = fixedCards.map((card, index) => {
+
+    const adminItem = impact?.items?.[index];
+
+    return {
+      ...card,
+
+      number:
+        adminItem?.number ??
+        adminItem?.description ??
+        card.defaultNumber,
+
+      title:
+        adminItem?.title ??
+        adminItem?.label ??
+        card.defaultTitle,
+    };
+  });
+
 
   return (
     <div className="font-sans text-gray-800">
@@ -363,61 +439,82 @@ export default function About() {
 
 
       {/* =====================================================
-          IMPACT
-      ===================================================== */}
-      <section className="py-24 bg-blue-950 text-white">
+    IMPACT / STATISTICS
+===================================================== */}
 
-        <div className="max-w-6xl mx-auto px-6 md:px-20">
+<section className="bg-white py-16 -mt-12 relative z-20">
+  <div className="container mx-auto px-6">
 
-          <div className="text-center mb-14">
+    {/* ================= IMPACT TITLE ================= */}
 
-            <span className="text-pink-300 font-semibold uppercase tracking-wider">
-              {impact?.subtitle || "Our Impact"}
-            </span>
+    <h2 className="text-4xl md:text-5xl font-bold text-blue-900 text-center mb-12">
+      {impact?.title || "Our Impact"}
+    </h2>
 
-            <h2 className="text-4xl md:text-5xl font-bold mt-3">
-              {impact?.title || "Making A Difference"}
-            </h2>
+    {/* ================= IMPACT CARDS ================= */}
 
-            {impact?.content && (
-              <p className="text-blue-100 max-w-2xl mx-auto mt-4">
-                {impact.content}
-              </p>
-            )}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 
-          </div>
+      {cards.map((item, index) => {
+        const Icon = item.icon;
 
+        return (
+          <motion.div
+            key={index}
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+            }}
+            transition={{
+              duration: 0.5,
+              delay: index * 0.1,
+            }}
+            whileHover={{
+              y: -8,
+              scale: 1.03,
+            }}
+            className="
+              bg-white
+              rounded-2xl
+              shadow-xl
+              p-8
+              text-center
+              border
+              border-gray-100
+              transition-shadow
+              hover:shadow-2xl
+            "
+          >
 
-          {impact?.items?.length > 0 && (
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-              {impact.items.map((item, index) => (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.04 }}
-                  className="bg-white/10 backdrop-blur-md p-8 rounded-3xl text-center border border-white/10"
-                >
-
-                  <h3 className="text-5xl font-extrabold mb-3 text-yellow-400">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-lg text-blue-100">
-                    {item.description || item.content}
-                  </p>
-
-                </motion.div>
-              ))}
-
+            {/* ICON */}
+            <div className="text-pink-500 flex justify-center mb-4">
+              <Icon size={35} />
             </div>
 
-          )}
+            {/* NUMBER */}
+            <h2 className="text-4xl font-bold text-blue-900">
+              {item.number}
+            </h2>
 
-        </div>
+            {/* TITLE */}
+            <p className="mt-3 text-gray-600 font-medium">
+              {item.title}
+            </p>
 
-      </section>
+          </motion.div>
+        );
+      })}
 
+    </div>
+  </div>
+</section>
 
       {/* =====================================================
           CTA

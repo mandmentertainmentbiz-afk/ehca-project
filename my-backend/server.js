@@ -145,6 +145,10 @@ app.use((err, req, res, next) => {
 /* ================= ENV VALIDATION ================= */
 const requiredEnvVars = [
   "MONGO_URI",
+  "RESEND_API_KEY",
+  "EMAIL_FROM",
+  "CONTACT_EMAIL",
+  "JWT_SECRET",
 ];
 
 for (const envVar of requiredEnvVars) {
