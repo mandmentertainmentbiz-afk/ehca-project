@@ -42,10 +42,10 @@ export default function Contact() {
   try {
     setLoading(true);
 
-    const API_URL = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
-
-const response = await axios.post(
-  `${API_URL}/contact`,
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/contact`,
+      form
+    );
 
     if (response.data.success) {
       alert("Message sent successfully!");
