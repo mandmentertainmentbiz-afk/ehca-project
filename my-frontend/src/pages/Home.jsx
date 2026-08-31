@@ -526,9 +526,12 @@ const impact = useSection("home", "impact");
               </div>  
             )}  
       
-            <button className="bg-pink-500 hover:bg-pink-600 px-8 py-4 rounded-xl font-bold transition">  
-              Donate Now  
-            </button>  
+            <Link
+  to="/donate"
+  className="relative z-50 inline-block bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold cursor-pointer"
+>
+  Donate Now
+</Link>
           </div>  
         </section>  
 
