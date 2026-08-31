@@ -36,16 +36,16 @@ export default function Contact() {
 
   /* ================= SUBMIT ================= */
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
     setLoading(true);
 
-    const API_URL = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+    const API_URL = import.meta.env.VITE_API_URL;
 
     const response = await axios.post(
-      `${API_URL}/api/contact`,
+      `${API_URL}/contact`,
       form
     );
 
