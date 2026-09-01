@@ -20,6 +20,7 @@ import AdminLayout from "./components/admin/AdminLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import { PageContentProvider } from "./context/PageContentContext";
+import Projects from "./pages/Projects";
 
 function AppContent() {
   const location = useLocation();
@@ -46,6 +47,8 @@ function AppContent() {
           <Route path="/donate" element={<Donate />} />
 
           <Route path="/gallery" element={<Gallery />} />
+
+          <Route path="/projects" element={<Projects />} />
 
           <Route path="/login" element={<Login />} />
 
