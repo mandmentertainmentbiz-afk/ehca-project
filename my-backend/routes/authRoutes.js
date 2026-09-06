@@ -46,42 +46,113 @@ router.post("/login", async (req, res) => {
   }
 });
 
-/* ================= CHANGE PASSWORD ================= */
-router.put("/change-password", verifyToken, async (req, res) => {
+/* ================= CHANGE ADMIN LOGIN DETAILS ================= */
+router.put("/change-credentials", verifyToken, async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
+    const {
+      currentPassword,
+      newEmail,
+      newPassword,
+      confirmPassword,
+    } = req.body;
 
+    // Find logged-in admin
     const admin = await Admin.findById(req.user.id);
 
-    const valid = await bcrypt.compare(oldPassword, admin.password);
-    if (!valid) {
-      return res.status(400).json({ message: "Old password is incorrect" });
+    if (!admin) {
+      return res.status(404).json({
+        message: "Admin account not found",
+      });
     }
 
-    const hashed = await bcrypt.hash(newPassword, 10);
-    admin.password = hashed;
+    // Current password is required
+    if (!currentPassword) {
+      return res.status(400).json({
+        message: "Current password is required",
+      });
+    }
+
+    // Verify current password
+    const valid = await bcrypt.compare(
+      currentPassword,
+      admin.password
+    );
+
+    if (!valid) {
+      return res.status(400).json({
+        message: "Current password is incorrect",
+      });
+    }
+
+    // At least email or password must be changed
+    if (!newEmail && !newPassword) {
+      return res.status(400).json({
+        message: "Enter a new email or new password",
+      });
+    }
+
+    /* ================= CHANGE EMAIL ================= */
+
+    if (newEmail) {
+      const email = newEmail.trim().toLowerCase();
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          message: "Please enter a valid email address",
+        });
+      }
+
+      // Check if another admin already uses this email
+      const existingAdmin = await Admin.findOne({
+        email,
+        _id: { $ne: admin._id },
+      });
+
+      if (existingAdmin) {
+        return res.status(400).json({
+          message: "That email address is already in use",
+        });
+      }
+
+      admin.email = email;
+    }
+
+    /* ================= CHANGE PASSWORD ================= */
+
+    if (newPassword) {
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          message: "Password must be at least 8 characters",
+        });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({
+          message: "New passwords do not match",
+        });
+      }
+
+      // Hash new password
+      admin.password = await bcrypt.hash(newPassword, 10);
+    }
 
     await admin.save();
 
-    res.json({ message: "Password updated successfully" });
+    return res.status(200).json({
+      success: true,
+      message:
+        "Login details updated successfully. Please log in again.",
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+    console.error("CHANGE CREDENTIALS ERROR:", err);
 
-/* ================= CHANGE EMAIL ================= */
-router.put("/change-email", verifyToken, async (req, res) => {
-  try {
-    const { newEmail } = req.body;
-
-    const admin = await Admin.findById(req.user.id);
-    admin.email = newEmail;
-
-    await admin.save();
-
-    res.json({ message: "Email updated successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update login details",
+    });
   }
 });
 

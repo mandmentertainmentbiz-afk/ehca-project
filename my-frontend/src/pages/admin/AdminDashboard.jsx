@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [editing, setEditing] = useState(null);
   const navigate = useNavigate();
   const { token } = useAuth();
+  
 
   /* ================= LOAD PROJECTS ================= */
   const fetchProjects = async () => {
@@ -31,6 +32,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  /* ================= ADMIN CREDENTIALS ================= */
+  const [credentials, setCredentials] = useState({
+    currentPassword: "",
+    newEmail: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [updatingCredentials, setUpdatingCredentials] = useState(false);
 
   /* ================= DELETE ================= */
 const handleDelete = async (id) => {
@@ -157,6 +168,112 @@ const handleUpdate = async (e) => {
   </Link>
 
 </div>
+
+{/* ================= ADMIN SECURITY ================= */}
+      <div className="bg-white rounded-2xl shadow-md p-6 mb-10 border-l-4 border-red-600">
+
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">
+            🔐 Admin Login & Security
+          </h2>
+
+          <p className="text-gray-500 mt-1">
+            Change the email address and password used to
+            access the admin dashboard.
+          </p>
+        </div>
+
+        <form
+          onSubmit={handleUpdateCredentials}
+          className="max-w-2xl"
+        >
+
+          {/* CURRENT PASSWORD */}
+          <div className="mb-4">
+            <label className="block font-semibold text-gray-700 mb-2">
+              Current Password
+            </label>
+
+            <input
+              type="password"
+              name="currentPassword"
+              value={credentials.currentPassword}
+              onChange={handleCredentialsChange}
+              placeholder="Enter your current password"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
+            />
+          </div>
+
+          {/* NEW EMAIL */}
+          <div className="mb-4">
+            <label className="block font-semibold text-gray-700 mb-2">
+              New Login Email
+            </label>
+
+            <input
+              type="email"
+              name="newEmail"
+              value={credentials.newEmail}
+              onChange={handleCredentialsChange}
+              placeholder="Enter new admin email"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <p className="text-sm text-gray-500 mt-1">
+              Leave blank if you don't want to change the email.
+            </p>
+          </div>
+
+          {/* NEW PASSWORD */}
+          <div className="mb-4">
+            <label className="block font-semibold text-gray-700 mb-2">
+              New Password
+            </label>
+
+            <input
+              type="password"
+              name="newPassword"
+              value={credentials.newPassword}
+              onChange={handleCredentialsChange}
+              placeholder="Enter new password"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <p className="text-sm text-gray-500 mt-1">
+              Minimum 8 characters. Leave blank if you don't
+              want to change the password.
+            </p>
+          </div>
+
+          {/* CONFIRM PASSWORD */}
+          <div className="mb-6">
+            <label className="block font-semibold text-gray-700 mb-2">
+              Confirm New Password
+            </label>
+
+            <input
+              type="password"
+              name="confirmPassword"
+              value={credentials.confirmPassword}
+              onChange={handleCredentialsChange}
+              placeholder="Confirm new password"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={updatingCredentials}
+            className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-semibold px-6 py-3 rounded-lg transition"
+          >
+            {updatingCredentials
+              ? "Updating..."
+              : "Update Login Details"}
+          </button>
+
+        </form>
+      </div>
 
       {/* ================= EDIT FORM ================= */}
       {editing && (
