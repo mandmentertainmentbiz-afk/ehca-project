@@ -18,31 +18,38 @@ export default function Projects() {
   ===================================================== */
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        setError("");
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-        const response = await axios.get(`${API_URL}/projects`);
+      const response = await axios.get(`${API_URL}/projects`);
 
-        /*
-         * Display every project created from the
-         * administration dashboard.
-         */
-        setProjects(response.data || []);
-      } catch (err) {
-        console.error("Projects fetch error:", err);
+      const allProjects = Array.isArray(response.data)
+        ? response.data
+        : response.data.projects || [];
 
-        setError(
-          "Unable to load projects at the moment. Please try again later."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+      // Only show records whose category is "project"
+      const projectOnly = allProjects.filter(
+        (project) =>
+          project.category?.toLowerCase().trim() === "project"
+      );
 
-    fetchProjects();
-  }, [API_URL]);
+      setProjects(projectOnly);
+
+    } catch (err) {
+      console.error("Projects fetch error:", err);
+
+      setError(
+        "Unable to load projects at the moment. Please try again later."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProjects();
+}, [API_URL]);
 
   /* =====================================================
      IMAGE URL
