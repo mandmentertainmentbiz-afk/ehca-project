@@ -43,6 +43,96 @@ export default function AdminDashboard() {
 
   const [updatingCredentials, setUpdatingCredentials] = useState(false);
 
+  /* ================= HANDLE CREDENTIAL INPUT ================= */
+  const handleCredentialsChange = (e) => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  /* ================= UPDATE ADMIN CREDENTIALS ================= */
+  const handleUpdateCredentials = async (e) => {
+    e.preventDefault();
+
+    if (!credentials.currentPassword) {
+      alert("Please enter your current password.");
+      return;
+    }
+
+    if (
+      !credentials.newEmail &&
+      !credentials.newPassword
+    ) {
+      alert("Please enter a new email or new password.");
+      return;
+    }
+
+    if (
+      credentials.newPassword &&
+      credentials.newPassword.length < 8
+    ) {
+      alert("New password must be at least 8 characters.");
+      return;
+    }
+
+    if (
+      credentials.newPassword &&
+      credentials.newPassword !==
+        credentials.confirmPassword
+    ) {
+      alert("New passwords do not match.");
+      return;
+    }
+
+    try {
+      setUpdatingCredentials(true);
+
+      const res = await axios.put(
+        "https://ehca-project-1.onrender.com/api/auth/change-credentials",
+        credentials,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert(
+        res.data.message ||
+          "Login details updated successfully."
+      );
+
+      // Clear the form
+      setCredentials({
+        currentPassword: "",
+        newEmail: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      // Remove old login token
+      localStorage.removeItem("token");
+
+      // Send admin to login
+      navigate("/login");
+
+    } catch (err) {
+      console.error(
+        "CHANGE CREDENTIALS ERROR:",
+        err
+      );
+
+      alert(
+        err.response?.data?.message ||
+          "Failed to update login details."
+      );
+
+    } finally {
+      setUpdatingCredentials(false);
+    }
+  };
+
   /* ================= DELETE ================= */
 const handleDelete = async (id) => {
   if (!window.confirm("Delete this project?")) return;
