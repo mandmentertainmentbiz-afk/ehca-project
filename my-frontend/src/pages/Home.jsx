@@ -130,9 +130,11 @@ const impact = useSection("home", "impact");
   const now = new Date();
 
   /* ================= OUR PROJECTS ================= */
-  const ourProjects = projects.filter(
+  const ourProjects = projects
+  .filter(
     (p) => p.category?.toLowerCase() === "project"
-  );
+  )
+  .slice(0, 3);
 
   /* ================= ONGOING ================= */
   const ongoingProjects = projects.filter((p) => {
